@@ -17,9 +17,6 @@ export class HomeScreen extends Component {
       },
     };
   }
-
-  //Load
-
   componentDidMount() {
     AsyncStorage.getItem('backgroundColor', (err, result) => {
       console.log('result', result);
@@ -34,6 +31,14 @@ export class HomeScreen extends Component {
           };
         });
       }
+    });
+    //Initiate mongoDB Stitch
+    this._loadClient();
+  }
+
+  _loadClient() {
+    Stitch.initializeDefaultAppClient('colors-ffzsi').then(client => {
+      console.log('client', client);
     });
   }
 
