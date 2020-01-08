@@ -23,10 +23,10 @@ export default class LoginScreen extends Component {
       <View style={styles.container}>
         <View style={styles.circle} />
         <View style={styles.circle2} />
-        <View style={{marginTop: 44}}>
+        <View style={{marginTop: 24}}>
           <Image
-            source={require('../../assets/chat.png')}
-            style={{width: 100, height: 100, alignSelf: 'center'}}
+            source={require('../../assets/Artboard.png')}
+            style={{width: 180, height: 120, alignSelf: 'center'}}
           />
         </View>
         <View style={{marginHorizontal: 32}}>
