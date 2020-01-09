@@ -1,9 +1,11 @@
-import firebase from 'firebase';
+import firebase from '@react-native-firebase/app';
+import firebaseAuth from '@react-native-firebase/auth';
 
 class Fire {
   constructor() {
     this.init(), this.checkAuth();
   }
+
   init = () => {
     if (!firebase.apps.length) {
       firebase.initializeApp({
@@ -20,9 +22,9 @@ class Fire {
   };
 
   checkAuth = () => {
-    firebase.auth().onAuthStateChanged(user => {
+    firebaseAuth.auth().onAuthStateChanged(user => {
       if (!user) {
-        firebase.auth().signInAnonymously();
+        firebaseAuth.auth().signInAnonymously();
       }
     });
   };
@@ -34,10 +36,13 @@ class Fire {
         timestamp: firebase.database.ServerValue.TIMESTAMP,
         user: item.user,
       };
+
       this.db.push(message);
     });
   };
   parse = message => {
+    console.log('message', message);
+
     const {user, text, timestamp} = message.val();
     const {key: _id} = message;
     const createdAt = new Date(timestamp);
@@ -57,12 +62,11 @@ class Fire {
     this.db.off();
   }
 
-  get uid() {
-    return (firebase.auth().currentUser || {}).uid;
-  }
-
   get db() {
     return firebase.database().ref('messages');
+  }
+  get uid() {
+    return (firebase.auth().currentUser || {}).uid;
   }
 }
 export default new Fire();

@@ -9,15 +9,10 @@ const store = configureStore();
 
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
-const AppStack = createStackNavigator(
-  {
-    Login: LoginScreen,
-    Chat: ChatScreen,
-  },
-  {
-    headerMode: 'none',
-  },
-);
+const AppStack = createStackNavigator({
+  Login: LoginScreen,
+  Chat: ChatScreen,
+});
 const AppNavigator = createAppContainer(AppStack);
 class App extends Component {
   render() {
