@@ -12,7 +12,9 @@ import {
 import {connect} from 'react-redux';
 
 // import AsyncStorage from '@react-native-community/async-storage';
-import Fire from '../../Fire';
+import auth from '@react-native-firebase/auth';
+import database from '@react-native-firebase/database';
+
 import {GiftedChat} from 'react-native-gifted-chat';
 
 export class ChatScreen extends Component {
@@ -23,32 +25,28 @@ export class ChatScreen extends Component {
     messages: [],
   };
 
-  get user() {
-    return {
-      _id: Fire.uid,
-      name: this.props.navigation.state.params.name,
-    };
-  }
-
   componentDidMount() {
-    Fire.get(message =>
-      this.setState(prevState => ({
-        messages: GiftedChat.append(prevState.messages, message),
-      })),
-    );
-  }
+    function onCreateAccount() {
+      const id = 111;
+      const uid = auth().currentUser.id;
 
-  componentWillUnmount() {
-    Fire.off();
+      // Create a reference
+      const ref = database().ref(`/users/${uid}`);
+
+      ref.set({
+        uid,
+        name: 'Joe Bloggs',
+        role: 'admin',
+      });
+    }
+    onCreateAccount();
   }
 
   render() {
-    console.log('Fire', Fire);
-
     const chat = (
       <GiftedChat
         messages={this.state.messages}
-        onSend={Fire.send}
+        // onSend={Fire.send}
         user={this.user}
       />
     );
