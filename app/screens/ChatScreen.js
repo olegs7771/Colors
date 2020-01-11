@@ -12,11 +12,9 @@ import {
 import {connect} from 'react-redux';
 
 // import AsyncStorage from '@react-native-community/async-storage';
-import auth from '@react-native-firebase/auth';
-import database from '@react-native-firebase/database';
 
 import {GiftedChat} from 'react-native-gifted-chat';
-
+import Firebase from '../../Fire';
 export class ChatScreen extends Component {
   static navigationOptions = ({navigation}) => ({
     title: navigation.getParam('name'),
@@ -25,22 +23,7 @@ export class ChatScreen extends Component {
     messages: [],
   };
 
-  componentDidMount() {
-    function onCreateAccount() {
-      const id = 111;
-      const uid = auth().currentUser.id;
-
-      // Create a reference
-      const ref = database().ref(`/users/${uid}`);
-
-      ref.set({
-        uid,
-        name: 'Joe Bloggs',
-        role: 'admin',
-      });
-    }
-    onCreateAccount();
-  }
+  componentDidMount() {}
 
   render() {
     const chat = (
