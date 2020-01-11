@@ -7,13 +7,14 @@ import {
   Platform,
   KeyboardAvoidingView,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 
 import {connect} from 'react-redux';
+import auth from '@react-native-firebase/auth';
+import database, {firebase} from '@react-native-firebase/database';
 
 // import AsyncStorage from '@react-native-community/async-storage';
-import auth from '@react-native-firebase/auth';
-import database from '@react-native-firebase/database';
 
 import {GiftedChat} from 'react-native-gifted-chat';
 
@@ -24,22 +25,17 @@ export class ChatScreen extends Component {
   state = {
     messages: [],
   };
-
   componentDidMount() {
-    function onCreateAccount() {
-      const id = 111;
-      const uid = auth().currentUser.id;
-
-      // Create a reference
-      const ref = database().ref(`/users/${uid}`);
-
-      ref.set({
-        uid,
-        name: 'Joe Bloggs',
-        role: 'admin',
-      });
-    }
-    onCreateAccount();
+    const username = this.props.navigation.state.params.name;
+    const email = 'john@gmail',
+      password = 123456;
+    firebase.auth().native.createUserWithEmailAndPassword();
+    // .then(user => {
+    //   console.log('user', user);
+    // })
+    // .catch(err => {
+    //   console.log('error::', err);
+    // });
   }
 
   render() {
