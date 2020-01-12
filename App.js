@@ -2,7 +2,8 @@ import {Component} from 'react';
 import {Provider} from 'react-redux';
 import configureStore from './store/store';
 import ChatScreen from './app/screens/ChatScreen';
-import LoginScreen from './app/screens/LoginScreen';
+import LoginScreen from './app/auth/LoginScreen';
+import RegisterScreen from './app/auth/RegisterScreen';
 import React from 'react';
 
 const store = configureStore();
@@ -12,6 +13,7 @@ import {createStackNavigator} from 'react-navigation-stack';
 const AppStack = createStackNavigator({
   Login: LoginScreen,
   Chat: ChatScreen,
+  Register: RegisterScreen,
 });
 const AppNavigator = createAppContainer(AppStack);
 class App extends Component {

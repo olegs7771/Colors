@@ -11,13 +11,15 @@ import {
 } from 'react-native';
 
 import {connect} from 'react-redux';
-import auth from '@react-native-firebase/auth';
-import database, {firebase} from '@react-native-firebase/database';
 
+import auth from '@react-native-firebase/auth';
+import storage from '@react-native-firebase/storage';
+import {firebase} from '@react-native-firebase/storage';
+import firestore from '@react-native-firebase/firestore';
 // import AsyncStorage from '@react-native-community/async-storage';
 
 import {GiftedChat} from 'react-native-gifted-chat';
-import Firebase from '../../Fire';
+
 export class ChatScreen extends Component {
   static navigationOptions = ({navigation}) => ({
     title: navigation.getParam('name'),
@@ -25,23 +27,39 @@ export class ChatScreen extends Component {
   state = {
     messages: [],
   };
-<<<<<<< HEAD
-
-  componentDidMount() {}
-=======
   componentDidMount() {
-    const username = this.props.navigation.state.params.name;
-    const email = 'john@gmail',
-      password = 123456;
-    firebase.auth().native.createUserWithEmailAndPassword();
-    // .then(user => {
-    //   console.log('user', user);
-    // })
-    // .catch(err => {
-    //   console.log('error::', err);
-    // });
+    const ref = firestore().collection('messages');
+    const addTodo = async () => {
+      await ref.add({
+        text: 'some message',
+        user: 'some user',
+      });
+    };
+    addTodo();
+    ref.onSnapshot(data => {
+      console.log('data', data);
+
+      data.forEach(doc => {
+        console.log(doc.data);
+      });
+    });
+
+    // const uemail = this.props.navigation.state.params.email;
+    // const password = this.props.navigation.state.params.password;
+    // console.log(uemail);
+
+    //Registration new User
+
+    // database()
+    //   ._app.auth()
+    //   .createUserWithEmailAndPassword(uemail, password)
+    //   .then(user => {
+    //     console.log('user', user);
+    //   })
+    //   .catch(err => {
+    //     console.log('Error :', err);
+    //   });
   }
->>>>>>> badefc60540daf51918d453df41ad2a135893425
 
   render() {
     const chat = (

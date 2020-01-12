@@ -10,14 +10,23 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
-export default class LoginScreen extends Component {
+export default class RegisterScreen extends Component {
   state = {
     name: '',
+    email: '',
+    password: '',
   };
 
-  _continue = () => {
-    this.props.navigation.navigate('Chat', {name: this.state.name});
+  _register = () => {
+    const data = {
+      name: this.state.name,
+      email: this.state.email,
+      password: this.state.password,
+    };
+
+    console.log('user :', data);
   };
+
   render() {
     return (
       <View style={styles.container}>
@@ -30,18 +39,33 @@ export default class LoginScreen extends Component {
           />
         </View>
         <View style={{marginHorizontal: 32}}>
-          <Text style={styles.header}>Username :</Text>
           <TextInput
             style={styles.input}
-            placeholder="DesignIntoCode"
+            placeholder="Name"
             onChangeText={name => {
               this.setState({name});
             }}
             value={this.state.name}
           />
-          <View style={{alignItems: 'flex-end', marginTop: 64}}>
-            <TouchableOpacity style={styles.continue} onPress={this._continue}>
-              <Icon name="arrow-right" size={24} color="#fff" />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            onChangeText={email => {
+              this.setState({email});
+            }}
+            value={this.state.email}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            onChangeText={password => {
+              this.setState({password});
+            }}
+            value={this.state.password}
+          />
+          <View style={{alignItems: 'flex-end', marginTop: 34}}>
+            <TouchableOpacity style={styles.continue} onPress={this._register}>
+              <Text style={{color: '#fff'}}>Register</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -73,12 +97,7 @@ const styles = StyleSheet.create({
     left: 200,
     top: -200,
   },
-  header: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    color: '#514E5A',
-    marginTop: 32,
-  },
+
   input: {
     marginTop: 12,
     height: 50,
