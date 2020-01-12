@@ -9,6 +9,7 @@ import {
   TextInput,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
+import {firebase} from '@react-native-firebase/storage';
 
 export default class LoginScreen extends Component {
   state = {
@@ -20,11 +21,20 @@ export default class LoginScreen extends Component {
   };
 
   _continue = () => {
-    this.props.navigation.navigate('Chat', {
-      email: this.state.email,
-      password: this.state.password,
-    });
+    // this.props.navigation.navigate('Chat', {
+    // const email = this.state.email,
+    //   password = this.state.password;
+
+    // firebase
+    //   .auth()
+    //   .signWithEmailAndPassword(email, password)
+    //   .then(user => console.log('user', user))
+    //   .catch(err => {
+    //     console.log('err:', err);
+    //   });
+    console.log('firebase', firebase.auth());
   };
+
   render() {
     return (
       <View style={styles.container}>
