@@ -8,23 +8,72 @@ import {
   Image,
   TextInput,
 } from 'react-native';
+import storage from '@react-native-firebase/storage';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
+import auth from '@react-native-firebase/auth';
+import {firebase} from '@react-native-firebase/storage';
+import database from '@react-native-firebase/database';
 
 export default class RegisterScreen extends Component {
   state = {
-    name: '',
     email: '',
     password: '',
   };
 
-  _register = () => {
-    const data = {
-      name: this.state.name,
-      email: this.state.email,
-      password: this.state.password,
-    };
+  componentDidMount() {
+    database()
+      ._app.auth()
+      .createUserWithEmailAndPassword('joe.bloggs@example.com', '123456')
+      .then(user => {
+        console.log('user', user);
+      })
+      .catch(err => {
+        console.log('Error :', err);
+      });
+  }
 
-    console.log('user :', data);
+  _register = async () => {
+    database()
+      ._app.auth()
+      .createUserWithEmailAndPassword('joe.bloggs@example.com', '123456')
+      .then(user => {
+        console.log('user', user);
+      })
+      .catch(err => {
+        console.log('Error :', err);
+      });
+
+    // storage()
+    //   ._app.auth()
+    //   .createUserWithEmailAndPassword('joe.bloggs@example.com', '123456')
+    //   .then(user => {
+    //     console.log('user', user);
+    //   })
+    //   .catch(err => {
+    //     console.log('Error :', err);
+    //   });
+
+    // await firebase
+    //   .auth()
+    //   .createUserWithEmailAndPassword('joe.bloggs@example.com', '123456')
+
+    //   .then(user => {
+    //     console.log('new user', user);
+    //   })
+    //   .catch(err => {
+    //     console.log('err', err);
+    //   });
+    // const email = this.state.email;
+    // const password = this.state.password;
+
+    // auth()
+    //   .createUserWithEmailAndPassword(email, password)
+    //   .then(user => {
+    //     console.log('new user', user);
+    //   })
+    //   .catch(err => {
+    //     console.log('err', err);
+    //   });
   };
 
   render() {
@@ -39,14 +88,6 @@ export default class RegisterScreen extends Component {
           />
         </View>
         <View style={{marginHorizontal: 32}}>
-          <TextInput
-            style={styles.input}
-            placeholder="Name"
-            onChangeText={name => {
-              this.setState({name});
-            }}
-            value={this.state.name}
-          />
           <TextInput
             style={styles.input}
             placeholder="Email"
