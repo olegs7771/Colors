@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect} from 'react';
 
 import {
   Text,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import {firebase} from '@react-native-firebase/storage';
@@ -15,25 +16,31 @@ export default class LoginScreen extends Component {
   state = {
     email: '',
     password: '',
+    loading: false,
   };
   _navigateToRegister = () => {
     this.props.navigation.navigate('Register');
   };
 
-  _continue = () => {
-    // this.props.navigation.navigate('Chat', {
-    // const email = this.state.email,
-    //   password = this.state.password;
+  _continue = async () => {
+    this.setState(prevState => ({...prevState, loading: true}));
 
-    // firebase
-    //   .auth()
-    //   .signWithEmailAndPassword(email, password)
-    //   .then(user => console.log('user', user))
-    //   .catch(err => {
-    //     console.log('err:', err);
-    //   });
-    console.log('firebase', firebase.auth());
+    const email = this.state.email,
+      password = this.state.password;
+    await firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(res =>
+        this.props.navigation.navigate('Chat', {email: res.user._user.email}),
+      )
+      .catch(err => {
+        console.log('err:', err);
+      });
   };
+
+  componentDidMount() {
+    this.setState(prevState => ({...prevState, loading: false}));
+  }
 
   render() {
     return (
@@ -63,6 +70,9 @@ export default class LoginScreen extends Component {
             }}
             value={this.state.password}
           />
+          {this.state.loading && (
+            <ActivityIndicator size="small" color="#00ff00" />
+          )}
 
           <View style={{alignItems: 'flex-end', marginTop: 30}}>
             <TouchableOpacity style={styles.continue} onPress={this._continue}>

@@ -16,18 +16,24 @@ import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 import {firebase} from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
-// import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import {GiftedChat} from 'react-native-gifted-chat';
 
 export class ChatScreen extends Component {
   static navigationOptions = ({navigation}) => ({
-    title: navigation.getParam('name'),
+    title: navigation.getParam('email'),
   });
   state = {
     messages: [],
   };
   componentDidMount() {
+    //Persist logged user email in AsyncStorage
+    if (this.props.navigation.state.params) {
+      const email = this.props.navigation.state.params.email;
+      AsyncStorage.setItem('email', email);
+    }
+
     const ref = firestore().collection('messages');
     const addTodo = async () => {
       await ref.add({
@@ -43,22 +49,6 @@ export class ChatScreen extends Component {
         console.log(doc.data);
       });
     });
-
-    // const uemail = this.props.navigation.state.params.email;
-    // const password = this.props.navigation.state.params.password;
-    // console.log(uemail);
-
-    //Registration new User
-
-    // database()
-    //   ._app.auth()
-    //   .createUserWithEmailAndPassword(uemail, password)
-    //   .then(user => {
-    //     console.log('user', user);
-    //   })
-    //   .catch(err => {
-    //     console.log('Error :', err);
-    //   });
   }
 
   render() {
