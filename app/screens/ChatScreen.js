@@ -21,6 +21,9 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {GiftedChat} from 'react-native-gifted-chat';
 
 export class ChatScreen extends Component {
+  state = {
+    email: '',
+  };
   static navigationOptions = ({navigation}) => ({
     title: navigation.getParam('email'),
   });
@@ -28,11 +31,16 @@ export class ChatScreen extends Component {
     messages: [],
   };
   componentDidMount() {
-    //Persist logged user email in AsyncStorage
-    if (this.props.navigation.state.params) {
-      const email = this.props.navigation.state.params.email;
-      AsyncStorage.setItem('email', email);
-    }
+    //Check if AsyncStorage contains user email
+    AsyncStorage.getItem('email').then(email => {
+      if (email) {
+        this.setState({email});
+      } else {
+        //Persist logged user email in AsyncStorage
+        const email = this.props.navigation.state.params.email;
+        AsyncStorage.setItem('email', email);
+      }
+    });
 
     const ref = firestore().collection('messages');
     const addTodo = async () => {
