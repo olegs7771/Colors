@@ -22,10 +22,10 @@ import {GiftedChat} from 'react-native-gifted-chat';
 
 export class ChatScreen extends Component {
   state = {
-    email: '',
+    email: null,
   };
   static navigationOptions = ({navigation}) => ({
-    title: navigation.getParam('email'),
+    title: 'test',
   });
   state = {
     messages: [],
@@ -33,11 +33,14 @@ export class ChatScreen extends Component {
   componentDidMount() {
     //Check if AsyncStorage contains user email
     AsyncStorage.getItem('email').then(email => {
+      console.log('email', email);
+
       if (email) {
         this.setState({email});
       } else {
         //Persist logged user email in AsyncStorage
         const email = this.props.navigation.state.params.email;
+        // this.setState({email});
         AsyncStorage.setItem('email', email);
       }
     });
@@ -51,11 +54,10 @@ export class ChatScreen extends Component {
     };
     addTodo();
     ref.onSnapshot(data => {
-      console.log('data', data);
-
-      data.forEach(doc => {
-        console.log(doc.data);
-      });
+      // console.log('data', data);
+      // data.forEach(doc => {
+      //   console.log(doc.data);
+      // });
     });
   }
 

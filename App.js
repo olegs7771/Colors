@@ -9,6 +9,7 @@ import React from 'react';
 
 const store = configureStore();
 
+import {createDrawerNavigator} from 'react-navigation-drawer';
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import createAnimatedSwitchNavigator from 'react-navigation-animated-switch';
@@ -16,6 +17,7 @@ import {Transition} from 'react-native-reanimated';
 const AppStack = createStackNavigator({
   Chat: ChatScreen,
 });
+
 const AuthStack = createStackNavigator({
   Loader: LoaderScreen,
   Login: LoginScreen,
