@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, View} from 'react-native';
+import {Text, StyleSheet, View, Button} from 'react-native';
 
 export default class HomeScreen extends Component {
   render() {
@@ -7,6 +7,10 @@ export default class HomeScreen extends Component {
       <View style={styles.container}>
         <View style={styles.containerTitle}>
           <Text style={styles.textTitle}>Wellcome to my App </Text>
+          <Button
+            title="Draw"
+            onPress={() => this.props.navigation.toggleDrawer()}
+          />
         </View>
       </View>
     );

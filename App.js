@@ -24,6 +24,15 @@ import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
 //Drawer
 
+const MyDrawerNavigator = createDrawerNavigator({
+  Home: {
+    screen: HomeScreen,
+  },
+  Chat: {
+    screen: ChatScreen,
+  },
+});
+
 const AppStack = createStackNavigator(
   {
     Home: HomeScreen,
@@ -68,7 +77,7 @@ const AuthStack = createStackNavigator({
 
 const MySwitch = createAnimatedSwitchNavigator(
   {
-    Chat: AppStack,
+    App: AppStack,
     Auth: AuthStack,
   },
   {
@@ -86,7 +95,7 @@ const MySwitch = createAnimatedSwitchNavigator(
   },
 );
 
-const AppNavigator = createAppContainer(MySwitch);
+const AppNavigator = createAppContainer(MyDrawerNavigator);
 class App extends Component {
   render() {
     return (
