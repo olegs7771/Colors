@@ -7,10 +7,6 @@ export default class HomeScreen extends Component {
       <View style={styles.container}>
         <View style={styles.containerTitle}>
           <Text style={styles.textTitle}>Wellcome to my App </Text>
-          <Button
-            title="Draw"
-            onPress={() => this.props.navigation.toggleDrawer()}
-          />
         </View>
       </View>
     );

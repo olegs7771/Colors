@@ -8,7 +8,6 @@ import ChatScreen from './app/screens/ChatScreen';
 import LoginScreen from './app/auth/LoginScreen';
 import RegisterScreen from './app/auth/RegisterScreen';
 import LoaderScreen from './app/screens/LoaderScreen';
-import DrawScreen from './app/screens/DrawScreen';
 
 import React from 'react';
 import {View, Text} from 'react-native';
@@ -19,24 +18,34 @@ import {createDrawerNavigator} from 'react-navigation-drawer';
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import createAnimatedSwitchNavigator from 'react-navigation-animated-switch';
+import {createBottomTabNavigator} from 'react-navigation-tabs';
 import {Transition} from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
+import AsyncStorage from '@react-native-community/async-storage';
 
 //Drawer
 
-const MyDrawerNavigator = createDrawerNavigator({
-  Home: {
-    screen: HomeScreen,
+const MyDrawerNavigator = createDrawerNavigator(
+  {
+    Home: {
+      screen: HomeScreen,
+    },
+    Chat: {
+      screen: ChatScreen,
+    },
   },
-  Chat: {
-    screen: ChatScreen,
+  {
+    contentComponent: () => (
+      <View style={{flex: 1, borderWidth: 1}}>
+        <Text>testing</Text>
+      </View>
+    ),
   },
-});
+);
 
 const AppStack = createStackNavigator(
   {
-    Home: HomeScreen,
-    Chat: ChatScreen,
+    MyDrawerNavigator: MyDrawerNavigator,
   },
   {
     defaultNavigationOptions: {
@@ -50,7 +59,12 @@ const AppStack = createStackNavigator(
               backgroundColor: '#007ab3',
             }}>
             <View style={{paddingTop: 10}}>
-              <Icon name="align-justify" size={30} color="#fff" />
+              <Icon
+                name="align-justify"
+                size={30}
+                color="#fff"
+                onPress={() => navigation.toggleDrawer()}
+              />
             </View>
             <View
               style={{
@@ -95,7 +109,7 @@ const MySwitch = createAnimatedSwitchNavigator(
   },
 );
 
-const AppNavigator = createAppContainer(MyDrawerNavigator);
+const AppNavigator = createAppContainer(MySwitch);
 class App extends Component {
   render() {
     return (
