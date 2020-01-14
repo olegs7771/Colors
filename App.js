@@ -8,6 +8,8 @@ import ChatScreen from './app/screens/ChatScreen';
 import LoginScreen from './app/auth/LoginScreen';
 import RegisterScreen from './app/auth/RegisterScreen';
 import LoaderScreen from './app/screens/LoaderScreen';
+//Navs
+import DrawerContent from './app/navs/DrawerContent';
 
 import React from 'react';
 import {View, Text} from 'react-native';
@@ -21,7 +23,6 @@ import createAnimatedSwitchNavigator from 'react-navigation-animated-switch';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import {Transition} from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
-import AsyncStorage from '@react-native-community/async-storage';
 
 //Drawer
 
@@ -35,11 +36,7 @@ const MyDrawerNavigator = createDrawerNavigator(
     },
   },
   {
-    contentComponent: () => (
-      <View style={{flex: 1, borderWidth: 1}}>
-        <Text>testing</Text>
-      </View>
-    ),
+    contentComponent: () => <DrawerContent />,
   },
 );
 
