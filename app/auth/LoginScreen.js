@@ -1,5 +1,9 @@
 import React, {Component, useEffect} from 'react';
+//Redux
+import {connect} from 'react-redux';
+import {getAuth} from '../../store/actions/authAction';
 
+import AsyncStorage from '@react-native-community/async-storage';
 import {
   Text,
   StyleSheet,
@@ -12,7 +16,7 @@ import {
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import {firebase} from '@react-native-firebase/storage';
 
-export default class LoginScreen extends Component {
+class LoginScreen extends Component {
   state = {
     email: '',
     password: '',
@@ -31,7 +35,11 @@ export default class LoginScreen extends Component {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(res =>
-        this.props.navigation.navigate('Chat', {email: res.user._user.email}),
+        AsyncStorage.setItem('email', email).then(() => {
+          //To Redux
+          this.props.getAuth({email});
+          this.props.navigation.navigate('Home', {email: res.user._user.email});
+        }),
       )
       .catch(err => {
         console.log('err:', err);
@@ -94,6 +102,8 @@ export default class LoginScreen extends Component {
     );
   }
 }
+
+export default connect(null, {getAuth})(LoginScreen);
 
 const styles = StyleSheet.create({
   container: {

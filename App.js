@@ -12,7 +12,7 @@ import LoaderScreen from './app/screens/LoaderScreen';
 import DrawerContent from './app/navs/DrawerContent';
 
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 
 const store = configureStore();
 
@@ -36,17 +36,21 @@ const MyDrawerNavigator = createDrawerNavigator(
     },
   },
   {
-    contentComponent: () => <DrawerContent />,
+    initialRouteName: 'Home',
+    contentComponent: ({navigation}) => {
+      return <DrawerContent navigation={navigation} />;
+    },
   },
 );
 
 const AppStack = createStackNavigator(
-  {
-    MyDrawerNavigator: MyDrawerNavigator,
-  },
+  {MyDrawerNavigator},
+
   {
     defaultNavigationOptions: {
       header: ({navigation}) => {
+        console.log('navigation', navigation);
+
         return (
           <View
             style={{
@@ -55,14 +59,14 @@ const AppStack = createStackNavigator(
               paddingLeft: 10,
               backgroundColor: '#007ab3',
             }}>
-            <View style={{paddingTop: 10}}>
+            <TouchableOpacity style={{paddingTop: 10}}>
               <Icon
                 name="align-justify"
                 size={30}
                 color="#fff"
                 onPress={() => navigation.toggleDrawer()}
               />
-            </View>
+            </TouchableOpacity>
             <View
               style={{
                 width: '80%',
@@ -81,13 +85,13 @@ const AppStack = createStackNavigator(
 );
 
 const AuthStack = createStackNavigator({
-  Loader: LoaderScreen,
   Login: LoginScreen,
   Register: RegisterScreen,
 });
 
 const MySwitch = createAnimatedSwitchNavigator(
   {
+    Loader: LoaderScreen,
     App: AppStack,
     Auth: AuthStack,
   },
@@ -109,6 +113,8 @@ const MySwitch = createAnimatedSwitchNavigator(
 const AppNavigator = createAppContainer(MySwitch);
 class App extends Component {
   render() {
+    console.log('this.props', this.props);
+
     return (
       <Provider store={store}>
         <AppNavigator />

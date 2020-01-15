@@ -9,16 +9,20 @@ export default class LoaderScreen extends Component {
   }
 
   _retrieveData = async () => {
-    await AsyncStorage.getItem('email').then(res => {
-      this.props.navigation.navigate(res ? 'Chat' : 'Auth');
-      console.log('res', res);
-    });
+    await AsyncStorage.getItem('email')
+      .then(res => {
+        this.props.navigation.navigate(res ? 'App' : 'Auth');
+        console.log('res', res);
+      })
+      .catch(err => {
+        console.log('err:', err);
+      });
   };
 
   render() {
     return (
       <View>
-        <Text> textInComponent </Text>
+        <Text> Loader.. </Text>
       </View>
     );
   }
