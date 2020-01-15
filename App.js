@@ -44,12 +44,12 @@ const MyDrawerNavigator = createDrawerNavigator(
 );
 
 const AppStack = createStackNavigator(
-  {MyDrawerNavigator},
+  {App: MyDrawerNavigator},
 
   {
     defaultNavigationOptions: {
       header: ({navigation}) => {
-        console.log('navigation', navigation);
+        console.log('navigation.state', navigation.state);
 
         return (
           <View
@@ -73,9 +73,9 @@ const AppStack = createStackNavigator(
                 alignItems: 'center',
                 paddingTop: 10,
               }}>
-              <Text style={{fontSize: 20, fontWeight: 'bold', color: '#fff'}}>
-                {navigation.state.routeName}
-              </Text>
+              {/* <Text style={{fontSize: 20, fontWeight: 'bold', color: '#fff'}}>
+                test
+              </Text> */}
             </View>
           </View>
         );
