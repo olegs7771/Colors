@@ -17,6 +17,7 @@
     "@react-native-firebase/database": "^6.2.0",
     "@react-native-firebase/firestore": "^6.2.0",
     "@react-native-firebase/storage": "^6.2.0",
+    "@react-navigation/native": "^5.0.0-alpha.27",
     "android": "0.0.8",
     "react": "16.9.0",
     "react-native": "^0.61.5",

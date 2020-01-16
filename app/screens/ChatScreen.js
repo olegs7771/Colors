@@ -12,9 +12,9 @@ import {
 
 import {connect} from 'react-redux';
 
-import auth from '@react-native-firebase/auth';
-import storage from '@react-native-firebase/storage';
-import {firebase} from '@react-native-firebase/storage';
+// import auth from '@react-native-firebase/auth';
+// import storage from '@react-native-firebase/storage';
+// import {firebase} from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -26,29 +26,29 @@ export class ChatScreen extends Component {
     messages: [],
   };
 
-  componentDidMount() {
-    const ref = firestore().collection('messages');
-    const addTodo = async () => {
-      await ref.add({
-        text: 'some message',
-        user: 'some user',
+  _onSend = (messages = []) => {
+    this.setState(prevState => ({
+      messages: GiftedChat.append(prevState.messages, messages),
+    }));
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.messages !== this.state.messages) {
+      const ref = firestore().collection('messages');
+      const message = this.state.messages[0];
+      console.log('message', message);
+      ref.add({
+        message,
       });
-    };
-    addTodo();
-    ref.onSnapshot(data => {
-      // console.log('data', data);
-      // data.forEach(doc => {
-      //   console.log(doc.data);
-      // });
-    });
+    }
   }
 
   render() {
     const chat = (
       <GiftedChat
         messages={this.state.messages}
-        // onSend={Fire.send}
-        user={this.user}
+        onSend={messages => this._onSend(messages)}
+        user={{user: this.props.auth.user}}
       />
     );
 
@@ -67,7 +67,9 @@ export class ChatScreen extends Component {
   }
 }
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  auth: state.auth,
+});
 
 const mapDispatchToProps = {};
 

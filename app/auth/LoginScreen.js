@@ -79,7 +79,9 @@ class LoginScreen extends Component {
             value={this.state.password}
           />
           {this.state.loading && (
-            <ActivityIndicator size="small" color="#00ff00" />
+            <View style={{marginTop: 20}}>
+              <ActivityIndicator size={40} color="#4dc3ff" />
+            </View>
           )}
 
           <View style={{alignItems: 'flex-end', marginTop: 30}}>

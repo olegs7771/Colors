@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
 import {Text, View} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-export default class LoaderScreen extends Component {
+import {connect} from 'react-redux';
+import {getAuth} from '../../store/actions/authAction';
+
+class LoaderScreen extends Component {
   constructor(props) {
     super(props);
 
@@ -10,9 +13,13 @@ export default class LoaderScreen extends Component {
 
   _retrieveData = async () => {
     await AsyncStorage.getItem('email')
-      .then(res => {
-        this.props.navigation.navigate(res ? 'App' : 'Auth');
-        console.log('res', res);
+      .then(email => {
+        //Redux
+        if (email) {
+          this.props.getAuth({email});
+        }
+        this.props.navigation.navigate(email ? 'App' : 'Auth');
+        console.log('email', email);
       })
       .catch(err => {
         console.log('err:', err);
@@ -27,3 +34,5 @@ export default class LoaderScreen extends Component {
     );
   }
 }
+
+export default connect(null, {getAuth})(LoaderScreen);

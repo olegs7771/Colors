@@ -2,8 +2,10 @@ import React, {Component} from 'react';
 import {Text, StyleSheet, View, TouchableOpacity} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
+import {connect} from 'react-redux';
+import {logoutUser} from '../../store/actions/authAction';
 
-export default class DrawerContent extends Component {
+class DrawerContent extends Component {
   constructor(props) {
     super(props);
     this._retreive();
@@ -22,6 +24,7 @@ export default class DrawerContent extends Component {
   _logOutUser = () => {
     AsyncStorage.removeItem('email')
       .then(() => {
+        this.props.logoutUser();
         this.props.navigation.navigate('Login');
       })
       .catch(err => {
@@ -64,6 +67,7 @@ export default class DrawerContent extends Component {
     );
   }
 }
+export default connect(null, {logoutUser})(DrawerContent);
 
 const styles = StyleSheet.create({
   container: {
