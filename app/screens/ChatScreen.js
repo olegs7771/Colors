@@ -16,7 +16,6 @@ import {connect} from 'react-redux';
 // import storage from '@react-native-firebase/storage';
 // import {firebase} from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
-import AsyncStorage from '@react-native-community/async-storage';
 
 import {GiftedChat} from 'react-native-gifted-chat';
 
