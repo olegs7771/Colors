@@ -74,13 +74,18 @@ export class ChatScreen extends Component {
           console.log('there is change');
           querySnapshot._changes.forEach(element => {
             console.log(element.doc._data.message);
-            this.setState(prevState => {
-              return {
-                ...prevState,
-                restrictUpdateState: true,
-                messages: prevState.messages.concat(element.doc._data.message),
-              };
-            });
+            //Prevent state update of self state user
+            if (querySnapshot.user.user !== this.props.auth.user) {
+              this.setState(prevState => {
+                return {
+                  ...prevState,
+                  restrictUpdateState: true,
+                  messages: prevState.messages.concat(
+                    element.doc._data.message,
+                  ),
+                };
+              });
+            }
           });
         }
       });
