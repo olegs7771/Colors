@@ -53,13 +53,14 @@ export class ChatScreen extends Component {
           });
         });
       });
+
     setTimeout(() => {
       this.setState({
         restrictDump: false,
       });
     }, 1000);
+    // Subscribe to user updates in 2000ms after CDM
 
-    // Subscribe to user updates:
     const unsubscribe = firestore()
       .collection('messages')
       .onSnapshot(querySnapshot => {
@@ -67,21 +68,34 @@ export class ChatScreen extends Component {
 
         console.log('Total users', querySnapshot.size);
         console.log('User Documents', querySnapshot.docs);
+        const {_changes, _docs} = querySnapshot;
+        if (_changes.length !== _docs.length && _docs.length !== 0) {
+          console.log('there is change');
+          querySnapshot._changes.forEach(element => {
+            console.log(element.doc._data.message);
+            this.setState(prevState => {
+              return {
+                ...prevState,
+                messages: prevState.messages.concat(element.doc._data.message),
+              };
+            });
+          });
+        }
       });
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.messages !== this.state.messages) {
-      const ref = firestore().collection('messages');
-      const message = this.state.messages[0];
-      console.log('message', message);
-      console.log('state updated!');
-      if (message !== undefined && !this.state.restrictDump) {
-        ref.add({
-          message,
-        });
-      }
-    }
+    // if (prevState.messages !== this.state.messages) {
+    //   const ref = firestore().collection('messages');
+    //   const message = this.state.messages[0];
+    //   console.log('message', message);
+    //   console.log('state updated!');
+    //   if (message !== undefined && !this.state.restrictDump) {
+    //     ref.add({
+    //       message,
+    //     });
+    //   }
+    // }
   }
 
   //Clear State on willBlur
