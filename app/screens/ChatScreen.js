@@ -26,6 +26,7 @@ export class ChatScreen extends Component {
       email: null,
       messages: [],
       restrictDump: false,
+      restrictUpdateState: false,
     };
   }
 
@@ -69,7 +70,7 @@ export class ChatScreen extends Component {
         console.log('Total users', querySnapshot.size);
         console.log('User Documents', querySnapshot.docs);
         const {_changes, _docs} = querySnapshot;
-        if (_changes.length !== _docs.length && _docs.length !== 0) {
+        if (_changes.length !== _docs.length) {
           console.log('there is change');
           querySnapshot._changes.forEach(element => {
             console.log(element.doc._data.message);
@@ -77,6 +78,7 @@ export class ChatScreen extends Component {
               return {
                 ...prevState,
                 messages: prevState.messages.concat(element.doc._data.message),
+                restrictUpdateState: true,
               };
             });
           });
@@ -85,17 +87,20 @@ export class ChatScreen extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    // if (prevState.messages !== this.state.messages) {
-    //   const ref = firestore().collection('messages');
-    //   const message = this.state.messages[0];
-    //   console.log('message', message);
-    //   console.log('state updated!');
-    //   if (message !== undefined && !this.state.restrictDump) {
-    //     ref.add({
-    //       message,
-    //     });
-    //   }
-    // }
+    if (
+      prevState.messages !== this.state.messages &&
+      !this.state.restrictUpdateState
+    ) {
+      const ref = firestore().collection('messages');
+      const message = this.state.messages[0];
+      console.log('message', message);
+      console.log('state updated!');
+      if (message !== undefined && !this.state.restrictDump) {
+        ref.add({
+          message,
+        });
+      }
+    }
   }
 
   //Clear State on willBlur
