@@ -35,15 +35,9 @@ export class ChatScreen extends Component {
     }));
   };
 
-  //Load messages from firebase /'messages'
-  _loadMessages = async () => {
-    //if component loaded do not update DB
-    this.setState({restrictDump: true});
-    setTimeout(() => {
-      this.setState({restrictDump: false});
-    }, 1000);
-
-    await firestore()
+  componentDidMount() {
+    console.log('mounted');
+    firestore()
       .collection('messages')
       .get()
       .then(response => {
@@ -54,17 +48,34 @@ export class ChatScreen extends Component {
             return {
               ...prevState,
               messages: prevState.messages.concat(element._data.message),
+              restrictDump: true,
             };
           });
         });
       });
-  };
+    setTimeout(() => {
+      this.setState({
+        restrictDump: false,
+      });
+    }, 1000);
+
+    // Subscribe to user updates:
+    const unsubscribe = firestore()
+      .collection('messages')
+      .onSnapshot(querySnapshot => {
+        console.log('querySnapshot', querySnapshot);
+
+        console.log('Total users', querySnapshot.size);
+        console.log('User Documents', querySnapshot.docs);
+      });
+  }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.messages !== this.state.messages) {
       const ref = firestore().collection('messages');
       const message = this.state.messages[0];
       console.log('message', message);
+      console.log('state updated!');
       if (message !== undefined && !this.state.restrictDump) {
         ref.add({
           message,
@@ -96,7 +107,7 @@ export class ChatScreen extends Component {
           enabled>
           <View>
             <NavigationEvents
-              onWillFocus={() => this._loadMessages()}
+              // onWillFocus={() => this._loadMessages()}
               // onDidFocus={payload => console.log('did focus', payload)}
               onWillBlur={() => this._clearState()}
               // onDidBlur={payload => console.log('did blur', payload)}
