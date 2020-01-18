@@ -109,9 +109,9 @@ export class ChatScreen extends Component {
   }
 
   //Clear State on willBlur
-  _clearState = () => {
-    this.setState({messages: []});
-  };
+  // _clearState = () => {
+  //   this.setState({messages: []});
+  // };
 
   render() {
     const chat = (
@@ -131,10 +131,10 @@ export class ChatScreen extends Component {
           enabled>
           <View>
             <NavigationEvents
-              // onWillFocus={() => this._loadMessages()}
-              // onDidFocus={payload => console.log('did focus', payload)}
-              onWillBlur={() => this._clearState()}
-              // onDidBlur={payload => console.log('did blur', payload)}
+            // onWillFocus={() => this._loadMessages()}
+            // onDidFocus={payload => console.log('did focus', payload)}
+            // onWillBlur={() => this._clearState()}
+            // onDidBlur={payload => console.log('did blur', payload)}
             />
           </View>
           {chat}
