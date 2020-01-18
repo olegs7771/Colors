@@ -73,9 +73,9 @@ export class ChatScreen extends Component {
         if (_changes.length !== _docs.length) {
           console.log('there is change');
           querySnapshot._changes.forEach(element => {
-            console.log(element.doc._data.message);
+            console.log('element', element.doc._data.message);
             //Prevent state update of self state user
-            if (querySnapshot.user.user !== this.props.auth.user) {
+            if (element.doc._data.message.user.user !== this.props.auth.user) {
               this.setState(prevState => {
                 return {
                   ...prevState,
