@@ -15,22 +15,38 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import {firebase} from '@react-native-firebase/storage';
+//Validation]
+import LoginValid from '../validation/LoginValid';
 
 class LoginScreen extends Component {
   state = {
-    email: '',
-    password: '',
+    form: {
+      email: '',
+      password: '',
+    },
     loading: false,
+    errors: {},
   };
   _navigateToRegister = () => {
     this.props.navigation.navigate('Register');
   };
 
   _continue = async () => {
+    //Validation
+    const {errors, isValid} = LoginValid(this.state.form);
+    if (!isValid) {
+      return this.setState(prevState => {
+        return {
+          ...prevState,
+          errors: errors,
+        };
+      });
+    }
+
     this.setState(prevState => ({...prevState, loading: true}));
 
-    const email = this.state.email,
-      password = this.state.password;
+    const email = this.state.form.email,
+      password = this.state.form.password;
     await firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
@@ -38,7 +54,9 @@ class LoginScreen extends Component {
         AsyncStorage.setItem('email', email).then(() => {
           //To Redux
           this.props.getAuth({email});
-          this.props.navigation.navigate('Home', {email: res.user._user.email});
+          this.props.navigation.navigate('Home', {
+            email: this.state.form.email,
+          });
         }),
       )
       .catch(err => {
@@ -66,18 +84,40 @@ class LoginScreen extends Component {
             style={styles.input}
             placeholder="Email"
             onChangeText={email => {
-              this.setState({email});
+              this.setState(prevState => {
+                return {
+                  form: {
+                    ...prevState.form,
+                    email,
+                  },
+                  errors: {},
+                };
+              });
             }}
-            value={this.state.email}
+            value={this.state.form.email}
           />
+          {this.state.errors.email && (
+            <Text style={{color: 'red'}}>{this.state.errors.email}</Text>
+          )}
           <TextInput
             style={styles.input}
             placeholder="Password"
             onChangeText={password => {
-              this.setState({password});
+              this.setState(prevState => {
+                return {
+                  form: {
+                    ...prevState.form,
+                    password,
+                  },
+                  errors: {},
+                };
+              });
             }}
-            value={this.state.password}
+            value={this.state.form.password}
           />
+          {this.state.errors.password && (
+            <Text style={{color: 'red'}}>{this.state.errors.password}</Text>
+          )}
           {this.state.loading && (
             <View style={{marginTop: 20}}>
               <ActivityIndicator size={40} color="#4dc3ff" />
