@@ -32,6 +32,7 @@ class LoginScreen extends Component {
   };
 
   _continue = async () => {
+    const errorsLocal = {};
     //Validation
     const {errors, isValid} = LoginValid(this.state.form);
     if (!isValid) {
@@ -60,7 +61,11 @@ class LoginScreen extends Component {
         }),
       )
       .catch(err => {
-        console.log('err:', err);
+        console.log('err :', err['message']);
+        errorsLocal.common = err['message'];
+        this.setState({
+          errors: errorsLocal,
+        });
       });
   };
 
@@ -118,6 +123,12 @@ class LoginScreen extends Component {
           {this.state.errors.password && (
             <Text style={{color: 'red'}}>{this.state.errors.password}</Text>
           )}
+          {this.state.errors.common && (
+            <View style={styles.containerErrors}>
+              <Text>{this.state.errors.common}</Text>
+            </View>
+          )}
+
           {this.state.loading && (
             <View style={{marginTop: 20}}>
               <ActivityIndicator size={40} color="#4dc3ff" />
@@ -207,5 +218,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#4dc3ff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  containerErrors: {
+    borderWidth: 1,
   },
 });
