@@ -119,6 +119,7 @@ export class ChatScreen extends Component {
         messages={this.state.messages}
         onSend={messages => this._onSend(messages)}
         user={{user: this.props.auth.user}}
+        onLongPress={this._longPress}
       />
     );
 

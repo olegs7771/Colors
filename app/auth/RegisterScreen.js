@@ -48,29 +48,33 @@ export default class RegisterScreen extends Component {
     await firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(user => {
-        console.log('user', user.additionalUserInfo.isNewUser);
-        //New User been created
-        if (user.additionalUserInfo.isNewUser) {
-          const message = `User ${user._user.email} been created`;
+      .then(
+        user => {
+          // console.log('user', user.additionalUserInfo.isNewUser);
+          //New User been created
+          console.log('user', user);
+
+          const message = `User ${user.user._user.email} been created`;
+          console.log('message', message);
+
           messagesLocal.user = message;
           this.setState({
             messages: messagesLocal,
+            loading: false,
           });
-          return;
-        }
-      })
-      .catch(err => {
-        console.log('err :', err['message']);
-        console.log('err length', err['message'].length);
+        },
+        err => {
+          console.log('err :', err);
+          // console.log('err length', err['message'].length);
 
-        const errEdited = err['message'].toString().substring(31);
-        errorsLocal.common = errEdited;
-        // errorsLocal.common = err['message'].subString(20);
-        this.setState({
-          errors: errorsLocal,
-        });
-      });
+          const errEdited = err['message'].toString().substring(31);
+          errorsLocal.common = errEdited;
+          // errorsLocal.common = err['message'].subString(20);
+          this.setState({
+            errors: errorsLocal,
+          });
+        },
+      );
   };
 
   render() {
@@ -140,13 +144,13 @@ export default class RegisterScreen extends Component {
           )}
 
           {/* {Messages from Local} */}
-          {/* {this.state.messages.user && (
+          {this.state.messages && (
             <View style={styles.containerMessages}>
               <Text style={{color: '#FFF', fontSize: 16}}>
                 {this.state.messages.user}
               </Text>
             </View>
-          )} */}
+          )}
 
           {this.state.loading && Object.keys(this.state.errors).length === 0 && (
             <View style={{marginTop: 20}}>
