@@ -49,13 +49,16 @@ export default class RegisterScreen extends Component {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(user => {
-        console.log('user', user);
+        console.log('user', user.additionalUserInfo.isNewUser);
         //New User been created
-        const message = `User ${user._user.email} been created`;
-        messagesLocal.user = message;
-        this.setState({
-          messages: messagesLocal,
-        });
+        if (user.additionalUserInfo.isNewUser) {
+          const message = `User ${user._user.email} been created`;
+          messagesLocal.user = message;
+          this.setState({
+            messages: messagesLocal,
+          });
+          return;
+        }
       })
       .catch(err => {
         console.log('err :', err['message']);
