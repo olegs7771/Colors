@@ -62,7 +62,9 @@ class LoginScreen extends Component {
       )
       .catch(err => {
         console.log('err :', err['message']);
-        errorsLocal.common = err['message'];
+        const errEdited = err['message'].toString().substring(21);
+        errorsLocal.common = errEdited;
+        // errorsLocal.common = err['message'].subString(20);
         this.setState({
           errors: errorsLocal,
         });
@@ -123,13 +125,15 @@ class LoginScreen extends Component {
           {this.state.errors.password && (
             <Text style={{color: 'red'}}>{this.state.errors.password}</Text>
           )}
+
+          {/* {Errors from FireStore API} */}
           {this.state.errors.common && (
             <View style={styles.containerErrors}>
-              <Text>{this.state.errors.common}</Text>
+              <Text style={{color: '#FFF'}}>{this.state.errors.common}</Text>
             </View>
           )}
 
-          {this.state.loading && (
+          {this.state.loading && this.state.errors === {} && (
             <View style={{marginTop: 20}}>
               <ActivityIndicator size={40} color="#4dc3ff" />
             </View>
@@ -220,6 +224,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   containerErrors: {
-    borderWidth: 1,
+    padding: 5,
+    borderRadius: 10,
+    marginTop: 10,
+    backgroundColor: '#ff1a1a',
   },
 });

@@ -7,30 +7,67 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
-import {firebase} from '@react-native-firebase/storage';
 import database from '@react-native-firebase/database';
+import {firebase} from '@react-native-firebase/storage';
+//Validation]
+import LoginValid from '../validation/LoginValid';
 
 export default class RegisterScreen extends Component {
   state = {
-    email: '',
-    password: '',
+    form: {
+      email: '',
+      password: '',
+    },
+    loading: false,
+    errors: {},
+    message: {},
   };
 
   _register = async () => {
-    const email = this.state.email,
-      password = this.state.password;
+    this.setState({loading: true});
+    const errorsLocal = {};
+    const messagesLocal = {};
+    //Validation
+    const {errors, isValid} = LoginValid(this.state.form);
+    if (!isValid) {
+      return this.setState(prevState => {
+        return {
+          ...prevState,
+          errors: errors,
+        };
+      });
+    }
+    const email = this.state.form.email,
+      password = this.state.form.password;
     await firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(user => {
         console.log('user', user);
+        //New User been created
+        const message = `User ${user._user.email} been created`;
+        messagesLocal.user = message;
+        this.setState({
+          messages: messagesLocal,
+        });
       })
-      .catch(err => console.log('err:', err));
+      .catch(err => {
+        console.log('err :', err['message']);
+        console.log('err length', err['message'].length);
+
+        const errEdited = err['message'].toString().substring(31);
+        errorsLocal.common = errEdited;
+        // errorsLocal.common = err['message'].subString(20);
+        this.setState({
+          errors: errorsLocal,
+        });
+      });
   };
 
   render() {
@@ -49,18 +86,70 @@ export default class RegisterScreen extends Component {
             style={styles.input}
             placeholder="Email"
             onChangeText={email => {
-              this.setState({email});
+              this.setState(prevState => {
+                return {
+                  form: {
+                    ...prevState.form,
+                    email,
+                  },
+                  errors: {},
+                  loading: false,
+                };
+              });
             }}
-            value={this.state.email}
+            value={this.state.form.email}
           />
+          {/* {Errors} */}
+          {this.state.errors.email && (
+            <Text style={{color: 'red'}}>{this.state.errors.email}</Text>
+          )}
+
           <TextInput
             style={styles.input}
             placeholder="Password"
             onChangeText={password => {
-              this.setState({password});
+              this.setState(prevState => {
+                return {
+                  form: {
+                    ...prevState.form,
+                    password,
+                  },
+                  errors: {},
+                  loading: false,
+                };
+              });
             }}
-            value={this.state.password}
+            value={this.state.form.password}
           />
+
+          {/* {Errors} */}
+          {this.state.errors.password && (
+            <Text style={{color: 'red', fontSize: 16}}>
+              {this.state.errors.password}
+            </Text>
+          )}
+
+          {/* {Errors from FireStore API} */}
+          {this.state.errors.common && (
+            <View style={styles.containerErrors}>
+              <Text style={{color: '#FFF'}}>{this.state.errors.common}</Text>
+            </View>
+          )}
+
+          {/* {Messages from Local} */}
+          {/* {this.state.messages.user && (
+            <View style={styles.containerMessages}>
+              <Text style={{color: '#FFF', fontSize: 16}}>
+                {this.state.messages.user}
+              </Text>
+            </View>
+          )} */}
+
+          {this.state.loading && Object.keys(this.state.errors).length === 0 && (
+            <View style={{marginTop: 20}}>
+              <ActivityIndicator size={40} color="#4dc3ff" />
+            </View>
+          )}
           <View style={{alignItems: 'flex-end', marginTop: 34}}>
             <TouchableOpacity style={styles.continue} onPress={this._register}>
               <Text style={{color: '#fff'}}>Register</Text>
@@ -113,5 +202,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#4dc3ff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  containerErrors: {
+    padding: 5,
+    borderRadius: 10,
+    marginTop: 10,
+    backgroundColor: '#ff1a1a',
+    alignItems: 'center',
+  },
+  containerMessages: {
+    padding: 5,
+    borderRadius: 10,
+    marginTop: 10,
+    backgroundColor: '#00cc00',
+    alignItems: 'center',
   },
 });
