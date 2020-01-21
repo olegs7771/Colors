@@ -108,18 +108,14 @@ export class ChatScreen extends Component {
     }
   }
 
-  //Clear State on willBlur
-  // _clearState = () => {
-  //   this.setState({messages: []});
-  // };
-
   render() {
+    console.log('GigtedChat', <GiftedChat />);
+
     const chat = (
       <GiftedChat
         messages={this.state.messages}
         onSend={messages => this._onSend(messages)}
         user={{user: this.props.auth.user}}
-        onLongPress={this._longPress}
       />
     );
 
