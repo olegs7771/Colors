@@ -104,6 +104,8 @@ export class ChatScreen extends Component {
       if (message !== undefined && !this.state.restrictDump) {
         db.add({
           message,
+        }).then(ref => {
+          console.log('ref.id', ref.id);
         });
       }
     }
@@ -122,12 +124,29 @@ export class ChatScreen extends Component {
       buttonIndex => {
         switch (buttonIndex) {
           case 0:
-            // //Delete Post from DB
-            const id = JSON.stringify(db.doc().id);
-            // db.doc(id).delete();
-            // console.log('deleted :', id);
-            db.doc(id).delete();
+            //delete from state
+            // this.setState(prevState => {
+            //   return {
+            //     ...prevState,
+            //     messages: prevState.messages.filter(element => {
+            //       return element._id !== message._id;
+            //     }),
+            //   };
+            // });
 
+            // //Delete Post from DB
+            console.log('message', message);
+
+            db.get().then(res => {
+              //Find all docs in DB & match with one to delete
+              const docToDelete = res._docs.find(elem => {
+                return elem._data.message._id === message._id;
+              });
+              console.log('docToDelete.id', docToDelete.id);
+              db.doc(docToDelete.id).delete();
+            });
+            console.log('db.doc()', db.doc().path);
+            // console.log('elem', elem._data.message._id);
             break;
         }
       },
@@ -135,11 +154,7 @@ export class ChatScreen extends Component {
   }
 
   render() {
-<<<<<<< HEAD
-    console.log('GiftedChat', <GiftedChat />);
-=======
     // console.log('GigtedChat', <GiftedChat />);
->>>>>>> 31de0862101d653b391a5f73adbeaa40741da2a3
 
     const chat = (
       <GiftedChat
