@@ -65,15 +65,15 @@ export class ChatScreen extends Component {
     const unsubscribe = firestore()
       .collection('messages')
       .onSnapshot(querySnapshot => {
-        console.log('querySnapshot', querySnapshot);
+        // console.log('querySnapshot', querySnapshot);
 
-        console.log('Total users', querySnapshot.size);
-        console.log('User Documents', querySnapshot.docs);
+        // console.log('Total users', querySnapshot.size);
+        // console.log('User Documents', querySnapshot.docs);
         const {_changes, _docs} = querySnapshot;
         if (_changes.length !== _docs.length) {
-          console.log('there is change');
+          // console.log('there is change');
           querySnapshot._changes.forEach(element => {
-            console.log('element', element.doc._data.message);
+            // console.log('element', element.doc._data.message);
             //Prevent state update of self state user
             if (element.doc._data.message.user.user !== this.props.auth.user) {
               this.setState(prevState => {
@@ -114,6 +114,8 @@ export class ChatScreen extends Component {
   // };
 
   render() {
+    console.log('GiftedChat', <GiftedChat />);
+
     const chat = (
       <GiftedChat
         messages={this.state.messages}
