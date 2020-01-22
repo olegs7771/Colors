@@ -38,6 +38,18 @@ export class ChatScreen extends Component {
     }));
   };
 
+  //Update State after Deletion
+  _updateState = id => {
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        messages: prevState.messages.filter(element => {
+          return element._id !== id;
+        }),
+      };
+    });
+  };
+
   componentDidMount() {
     console.log('mounted');
     firestore()
@@ -112,6 +124,8 @@ export class ChatScreen extends Component {
   }
 
   onLongPress(context, message) {
+    console.log('context', context);
+
     console.log('message', message);
     const options = ['Delete Message', 'Cancel', 'Copy Text'];
     const cancelButtonIndex = options.length - 2;
@@ -125,15 +139,9 @@ export class ChatScreen extends Component {
         switch (buttonIndex) {
           case 0:
             //delete from state
-            // this.setState(prevState => {
-            //   return {
-            //     ...prevState,
-            //     messages: prevState.messages.filter(element => {
-            //       return element._id !== message._id;
-            //     }),
-            //   };
-            // });
+            console.log('context', context);
 
+            // this._updateState(message._id);
             // //Delete Post from DB
             console.log('message', message);
 
