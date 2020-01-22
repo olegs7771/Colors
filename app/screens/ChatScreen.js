@@ -8,16 +8,18 @@ import {
   KeyboardAvoidingView,
   SafeAreaView,
   Alert,
+  Clipboard,
 } from 'react-native';
 
 import {connect} from 'react-redux';
 
 // import auth from '@react-native-firebase/auth';
-// import storage from '@react-native-firebase/storage';
+import storage from '@react-native-firebase/storage';
 // import {firebase} from '@react-native-firebase/storage';
-import firestore from '@react-native-firebase/firestore';
 import {GiftedChat} from 'react-native-gifted-chat';
-import {NavigationEvents} from 'react-navigation';
+
+import firestore from '@react-native-firebase/firestore';
+const db = firestore().collection('messages');
 
 export class ChatScreen extends Component {
   constructor(props) {
@@ -96,32 +98,55 @@ export class ChatScreen extends Component {
       prevState.messages !== this.state.messages &&
       !this.state.restrictUpdateState
     ) {
-      const ref = firestore().collection('messages');
       const message = this.state.messages[0];
       console.log('message', message);
       console.log('state updated!');
       if (message !== undefined && !this.state.restrictDump) {
-        ref.add({
+        db.add({
           message,
         });
       }
     }
   }
 
-  //Clear State on willBlur
-  // _clearState = () => {
-  //   this.setState({messages: []});
-  // };
+  onLongPress(context, message) {
+    console.log('message', message);
+    const options = ['Delete Message', 'Cancel', 'Copy Text'];
+    const cancelButtonIndex = options.length - 2;
+
+    context.actionSheet().showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+      },
+      buttonIndex => {
+        switch (buttonIndex) {
+          case 0:
+            // //Delete Post from DB
+            const id = JSON.stringify(db.doc().id);
+            // db.doc(id).delete();
+            // console.log('deleted :', id);
+            db.doc(id).delete();
+
+            break;
+        }
+      },
+    );
+  }
 
   render() {
+<<<<<<< HEAD
     console.log('GiftedChat', <GiftedChat />);
+=======
+    // console.log('GigtedChat', <GiftedChat />);
+>>>>>>> 31de0862101d653b391a5f73adbeaa40741da2a3
 
     const chat = (
       <GiftedChat
         messages={this.state.messages}
         onSend={messages => this._onSend(messages)}
         user={{user: this.props.auth.user}}
-        onLongPress={this._longPress}
+        onLongPress={this.onLongPress}
       />
     );
 
@@ -132,14 +157,6 @@ export class ChatScreen extends Component {
           behavior="padding"
           keyboardVerticalOffset={30}
           enabled>
-          <View>
-            <NavigationEvents
-            // onWillFocus={() => this._loadMessages()}
-            // onDidFocus={payload => console.log('did focus', payload)}
-            // onWillBlur={() => this._clearState()}
-            // onDidBlur={payload => console.log('did blur', payload)}
-            />
-          </View>
           {chat}
         </KeyboardAvoidingView>
       );
