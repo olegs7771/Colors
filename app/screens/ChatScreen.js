@@ -46,8 +46,9 @@ export class ChatScreen extends Component {
       .collection('messages')
       .get()
       .then(response => {
+        console.log('response', response);
+
         response._docs.forEach(element => {
-          console.log('element', element._data.message);
           //Add to state& prevent dump to server after CDM
           this.setState(prevState => {
             return {
@@ -162,7 +163,16 @@ export class ChatScreen extends Component {
                 return elem._data.message._id === message._id;
               });
               // console.log('docToDelete.id', docToDelete.id);
-              db.doc(docToDelete.id).delete();
+              db.doc(docToDelete.id)
+                .delete()
+                .then(() => {
+                  console.log('deleted');
+                  //SelectedPost in Redux to delete
+                  this.props.selectPost(message);
+                })
+                .catch(err => {
+                  console.log('cant delete', err);
+                });
             });
             // console.log('db.doc()', db.doc().path);
             // console.log('elem', elem._data.message._id);
