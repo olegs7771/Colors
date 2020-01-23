@@ -30,6 +30,7 @@ export class ChatScreen extends Component {
       messages: [],
       restrictDump: false,
       restrictUpdateState: false,
+      deleting: false,
     };
   }
 
@@ -37,18 +38,6 @@ export class ChatScreen extends Component {
     this.setState(prevState => ({
       messages: GiftedChat.append(prevState.messages, messages),
     }));
-  };
-
-  //Update State after Deletion
-  _updateState = id => {
-    this.setState(prevState => {
-      return {
-        ...prevState,
-        messages: prevState.messages.filter(element => {
-          return element._id !== id;
-        }),
-      };
-    });
   };
 
   componentDidMount() {
@@ -59,7 +48,7 @@ export class ChatScreen extends Component {
       .then(response => {
         response._docs.forEach(element => {
           console.log('element', element._data.message);
-          //Add to state
+          //Add to state& prevent dump to server after CDM
           this.setState(prevState => {
             return {
               ...prevState,
@@ -75,7 +64,7 @@ export class ChatScreen extends Component {
         restrictDump: false,
       });
     }, 1000);
-    // Subscribe to user updates in 2000ms after CDM
+    // Subscribe to user updates in 1000ms after CDM
 
     const unsubscribe = firestore()
       .collection('messages')
@@ -114,24 +103,36 @@ export class ChatScreen extends Component {
       const message = this.state.messages[0];
       console.log('message', message);
       console.log('state updated!');
-      if (message !== undefined && !this.state.restrictDump) {
+      if (
+        message !== undefined &&
+        !this.state.restrictDump &&
+        !this.state.deleting
+      ) {
         db.add({
           message,
         }).then(ref => {
-          console.log('ref.id', ref.id);
+          console.log(' added  message ref.id', ref.id);
         });
       }
     }
-    //After Deletion of the Post Delete in State
+
+    //Delete Post
+    //Updating state
     if (prevProps.post !== this.props.post) {
       this.setState(prevState => {
         return {
           ...prevState,
+          deleting: true,
+
           messages: prevState.messages.filter(element => {
             return element._id !== this.props.post.selectedPost._id;
           }),
         };
       });
+      //reset state deleting to false
+      setTimeout(() => {
+        this.setState({deleting: false});
+      }, 1000);
     }
   }
 
