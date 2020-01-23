@@ -1,15 +1,15 @@
-import {SEND_POST} from '../actions/type';
+import {SELECT_POST} from '../actions/type';
 
 const initialState = {
-  post: null,
+  selectedPost: null,
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case SEND_POST:
+    case SELECT_POST:
       return {
         ...state,
-        post: action.payload.post,
+        selectedPost: action.payload,
       };
     default:
       return state;

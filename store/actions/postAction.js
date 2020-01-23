@@ -1,9 +1,9 @@
-import {SEND_POST} from './type';
+import {SELECT_POST} from './type';
 
-export const sendPost = data => dispatch => {
-  console.log('data', data);
+export const selectPost = message => dispatch => {
+  console.log('message', message);
   dispatch({
-    type: SEND_POST,
-    payload: data,
+    type: SELECT_POST,
+    payload: message,
   });
 };

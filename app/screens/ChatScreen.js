@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 
 import {connect} from 'react-redux';
+import {selectPost} from '../../store/actions/postAction';
 
 // import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
@@ -121,12 +122,21 @@ export class ChatScreen extends Component {
         });
       }
     }
+    //After Deletion of the Post Delete in State
+    if (prevProps.post !== this.props.post) {
+      this.setState(prevState => {
+        return {
+          ...prevState,
+          messages: prevState.messages.filter(element => {
+            return element._id !== this.props.post.selectedPost._id;
+          }),
+        };
+      });
+    }
   }
 
   onLongPress(context, message) {
-    console.log('context', context);
-
-    console.log('message', message);
+    // console.log('message', message);
     const options = ['Delete Message', 'Cancel', 'Copy Text'];
     const cancelButtonIndex = options.length - 2;
 
@@ -138,22 +148,22 @@ export class ChatScreen extends Component {
       buttonIndex => {
         switch (buttonIndex) {
           case 0:
-            //delete from state
-            console.log('context', context);
+            //SelectedPost in Redux
+            this.props.selectPost(message);
 
             // this._updateState(message._id);
             // //Delete Post from DB
-            console.log('message', message);
+            // console.log('message', message);
 
             db.get().then(res => {
               //Find all docs in DB & match with one to delete
               const docToDelete = res._docs.find(elem => {
                 return elem._data.message._id === message._id;
               });
-              console.log('docToDelete.id', docToDelete.id);
+              // console.log('docToDelete.id', docToDelete.id);
               db.doc(docToDelete.id).delete();
             });
-            console.log('db.doc()', db.doc().path);
+            // console.log('db.doc()', db.doc().path);
             // console.log('elem', elem._data.message._id);
             break;
         }
@@ -170,6 +180,8 @@ export class ChatScreen extends Component {
         onSend={messages => this._onSend(messages)}
         user={{user: this.props.auth.user}}
         onLongPress={this.onLongPress}
+        props={this.props}
+        state={this.state}
       />
     );
 
@@ -190,9 +202,10 @@ export class ChatScreen extends Component {
 
 const mapStateToProps = state => ({
   auth: state.auth,
+  post: state.post,
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {selectPost};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatScreen);
 
