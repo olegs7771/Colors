@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 import {connect} from 'react-redux';
 import {logoutUser} from '../../store/actions/authAction';
+import ImagePicker from 'react-native-image-crop-picker';
 
 class DrawerContent extends Component {
   constructor(props) {
@@ -36,33 +37,34 @@ class DrawerContent extends Component {
     return (
       <View style={styles.container}>
         <TouchableOpacity style={styles.containerUser}>
-          {this.state.email ? (
-            <Text style={{fontSize: 20, fontWeight: 'bold', color: '#FFF'}}>
-              User : {this.state.email}{' '}
-            </Text>
-          ) : (
-            <Text style={{fontSize: 20, color: '#FFF'}}> SignIn </Text>
-          )}
+          <Text style={{fontSize: 20, fontWeight: 'bold', color: '#FFF'}}>
+            User : {this.state.email}{' '}
+          </Text>
         </TouchableOpacity>
-        {this.state.email ? (
-          <TouchableOpacity
-            style={styles.containerLog}
-            onPress={this._logOutUser}>
-            <View style={styles.containerIcon}>
-              <Icon
-                name="md-log-out"
-                size={20}
-                color="#FFF"
-                style={{marginLeft: 10}}
-              />
-            </View>
-            <View style={styles.containerText}>
-              <Text style={{fontSize: 16, fontWeight: 'bold', color: '#FFF'}}>
-                Logout
-              </Text>
-            </View>
-          </TouchableOpacity>
-        ) : null}
+
+        <TouchableOpacity
+          style={styles.containerLog}
+          onPress={this._logOutUser}>
+          <View style={styles.containerIcon}>
+            <Icon
+              name="md-log-out"
+              size={20}
+              color="#FFF"
+              style={{marginLeft: 10}}
+            />
+          </View>
+          <View style={styles.containerText}>
+            <Text style={{fontSize: 16, fontWeight: 'bold', color: '#FFF'}}>
+              Logout
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+        <View style={styles.containerAvatar}>
+          <View style={styles.containerAvatarTitle}>
+            <Text style={{fontSize: 16, fontWeight: 'bold'}}>Pick Avatar</Text>
+          </View>
+        </View>
       </View>
     );
   }
@@ -94,5 +96,15 @@ const styles = StyleSheet.create({
   containerText: {
     marginLeft: 10,
   },
-  containerIcon: {},
+  containerAvatar: {
+    borderWidth: 1,
+    width: '80%',
+    height: 300,
+    marginTop: 20,
+  },
+  containerAvatarTitle: {
+    borderWidth: 1,
+    alignItems: 'center',
+    paddingVertical: 10,
+  },
 });

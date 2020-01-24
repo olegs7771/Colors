@@ -76,6 +76,7 @@ export class ChatScreen extends Component {
           const messageUser = element.doc._data.message.user.user;
           const loggedUser = this.props.auth.user;
           if (!ChatSameUser(loggedUser, messageUser)) {
+            //When message been removed on server
             if (element.type === 'removed') {
               console.log('element to delete', element.doc._data.message._id);
 
@@ -86,6 +87,16 @@ export class ChatScreen extends Component {
                   messages: prevState.messages.filter(elem => {
                     return elem._id !== element.doc._data.message._id;
                   }),
+                };
+              });
+            }
+            //When Message been added on Server
+            if (element.type === 'added') {
+              const message = element.doc._data.message;
+              this.setState(prevState => {
+                return {
+                  ...prevState,
+                  messages: prevState.messages.concat(message),
                 };
               });
             }
