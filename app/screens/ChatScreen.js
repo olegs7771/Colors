@@ -70,7 +70,7 @@ export class ChatScreen extends Component {
     const unsubscribe = firestore()
       .collection('messages')
       .onSnapshot(querySnapshot => {
-        // console.log('querySnapshot', querySnapshot);
+        // console.log('querySnapshot', querySnapshot);//
 
         // console.log('Total users', querySnapshot.size);
         // console.log('User Documents', querySnapshot.docs);
