@@ -77,25 +77,27 @@ export class ChatScreen extends Component {
           const loggedUser = this.props.auth.user;
 
           if (!ChatSameUser(loggedUser, messageUser)) {
-            if (_changes.length !== _docs.length) {
-              // console.log('there is change');
-              querySnapshot._changes.forEach(element => {
-                // console.log('element', element.doc._data.message);
-                //Prevent state update of self state user
-                if (
-                  element.doc._data.message.user.user !== this.props.auth.user
-                ) {
-                  this.setState(prevState => {
-                    return {
-                      ...prevState,
-                      restrictUpdateState: true,
-                      messages: prevState.messages.concat(
-                        element.doc._data.message,
-                      ),
-                    };
-                  });
-                }
-              });
+            if (element.size < 2) {
+              if (_changes.length !== _docs.length) {
+                // console.log('there is change');
+                querySnapshot._changes.forEach(element => {
+                  // console.log('element', element.doc._data.message);
+                  //Prevent state update of self state user
+                  if (
+                    element.doc._data.message.user.user !== this.props.auth.user
+                  ) {
+                    this.setState(prevState => {
+                      return {
+                        ...prevState,
+                        restrictUpdateState: true,
+                        messages: prevState.messages.concat(
+                          element.doc._data.message,
+                        ),
+                      };
+                    });
+                  }
+                });
+              }
             }
           }
 
