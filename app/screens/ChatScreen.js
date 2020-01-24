@@ -76,7 +76,7 @@ export class ChatScreen extends Component {
           const messageUser = element.doc._data.message.user.user;
           const loggedUser = this.props.auth.user;
 
-          if (ChatSameUser(loggedUser, messageUser)) {
+          if (!ChatSameUser(loggedUser, messageUser)) {
             if (_changes.length !== _docs.length) {
               // console.log('there is change');
               querySnapshot._changes.forEach(element => {
