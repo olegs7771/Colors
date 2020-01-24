@@ -1,8 +1,5 @@
-import React from 'react';
-import connect from 'react-redux';
-
-const ChatSameUser = () => {
-  return <div></div>;
+const ChatSameUser = (currentUser, messageUser) => {
+  return currentUser === messageUser;
 };
 
-export default connect()(ChatSameUser);
+export default ChatSameUser;

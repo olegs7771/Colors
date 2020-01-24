@@ -13,13 +13,9 @@ import {
 
 import {connect} from 'react-redux';
 import {selectPost} from '../../store/actions/postAction';
-
-// import auth from '@react-native-firebase/auth';
-import storage from '@react-native-firebase/storage';
-// import {firebase} from '@react-native-firebase/storage';
 import {GiftedChat} from 'react-native-gifted-chat';
-
 import firestore from '@react-native-firebase/firestore';
+import ChatSameUser from '../misc/ChatSameUser';
 const db = firestore().collection('messages');
 
 export class ChatScreen extends Component {
@@ -77,8 +73,10 @@ export class ChatScreen extends Component {
         const {_changes, _docs, size} = querySnapshot;
         // console.log('there is change');
         querySnapshot._changes.forEach(element => {
-          console.log('element.type', element.type);
-          if (!element.type === 'removed') {
+          const messageUser = element.doc._data.message.user.user;
+          const loggedUser = this.props.auth.user;
+
+          if (ChatSameUser(loggedUser, messageUser)) {
             if (_changes.length !== _docs.length) {
               // console.log('there is change');
               querySnapshot._changes.forEach(element => {
@@ -100,6 +98,8 @@ export class ChatScreen extends Component {
               });
             }
           }
+
+          console.log('element.type', element.type);
         });
 
         setTimeout(() => {
@@ -194,8 +194,6 @@ export class ChatScreen extends Component {
   }
 
   render() {
-    // console.log('GigtedChat', <GiftedChat />);
-
     const chat = (
       <GiftedChat
         messages={this.state.messages}
