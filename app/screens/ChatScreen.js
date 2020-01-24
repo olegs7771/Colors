@@ -68,40 +68,40 @@ export class ChatScreen extends Component {
       .onSnapshot(querySnapshot => {
         console.log('querySnapshot on change', querySnapshot);
 
-        // console.log('Total users', querySnapshot.size);
-        // console.log('User Documents', querySnapshot.docs);
         const {_changes, _docs, size} = querySnapshot;
-        // console.log('there is change');
+        console.log('there is change');
         querySnapshot._changes.forEach(element => {
+          // console.log('element', element);
+          // console.log('element.type', element.type);
           const messageUser = element.doc._data.message.user.user;
           const loggedUser = this.props.auth.user;
-
           if (!ChatSameUser(loggedUser, messageUser)) {
-            if (element.size < 2) {
-              // if (_changes.length !== _docs.length) {
-              // console.log('there is change');
-              querySnapshot._changes.forEach(element => {
-                // console.log('element', element.doc._data.message);
-                //Prevent state update of self state user
-                if (
-                  element.doc._data.message.user.user !== this.props.auth.user
-                ) {
-                  this.setState(prevState => {
-                    return {
-                      ...prevState,
-                      restrictUpdateState: true,
-                      messages: prevState.messages.concat(
-                        element.doc._data.message,
-                      ),
-                    };
-                  });
-                }
+            if (element.type === 'removed') {
+              console.log('element to delete', element.doc._data.message._id);
+
+              // Remove Message from State
+              this.setState(prevState => {
+                return {
+                  ...prevState,
+                  messages: prevState.messages.filter(elem => {
+                    return elem._id !== element.doc._data.message._id;
+                  }),
+                };
               });
-              // }
             }
           }
 
-          console.log('element.type', element.type);
+          // const messageUser = element.doc._data.message.user.user;
+          // const loggedUser = this.props.auth.user;
+
+          // if (!ChatSameUser(loggedUser, messageUser)) {
+          // if (element.size < 2) {
+          // if (_changes.length !== _docs.length) {
+          // console.log('there is change');
+
+          // }
+          // }
+          // }
         });
 
         setTimeout(() => {
@@ -134,7 +134,7 @@ export class ChatScreen extends Component {
     }
 
     //Delete Post
-    //Updating state
+    //Updating state for SameUser
     if (prevProps.post !== this.props.post) {
       this.setState(prevState => {
         return {
