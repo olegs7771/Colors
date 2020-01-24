@@ -75,41 +75,32 @@ export class ChatScreen extends Component {
         // console.log('Total users', querySnapshot.size);
         // console.log('User Documents', querySnapshot.docs);
         const {_changes, _docs, size} = querySnapshot;
-        if (size < 2) {
-          // console.log('there is change');
-          querySnapshot._changes.forEach(element => {
-            // console.log('element', element.doc._data.message);/
-            //Prevent state update of self state user
-            if (element.doc._data.message.user.user !== this.props.auth.user) {
-              this.setState(prevState => {
-                return {
-                  ...prevState,
-                  restrictUpdateState: true,
-                  messages: prevState.messages.concat(
-                    element.doc._data.message,
-                  ),
-                };
+        // console.log('there is change');
+        querySnapshot._changes.forEach(element => {
+          console.log('element.type', element.type);
+          if (!element.type === 'removed') {
+            if (_changes.length !== _docs.length) {
+              // console.log('there is change');
+              querySnapshot._changes.forEach(element => {
+                // console.log('element', element.doc._data.message);
+                //Prevent state update of self state user
+                if (
+                  element.doc._data.message.user.user !== this.props.auth.user
+                ) {
+                  this.setState(prevState => {
+                    return {
+                      ...prevState,
+                      restrictUpdateState: true,
+                      messages: prevState.messages.concat(
+                        element.doc._data.message,
+                      ),
+                    };
+                  });
+                }
               });
             }
-          });
-        } else if (_changes.length !== _docs.length) {
-          // console.log('there is change');
-          querySnapshot._changes.forEach(element => {
-            // console.log('element', element.doc._data.message);
-            //Prevent state update of self state user
-            if (element.doc._data.message.user.user !== this.props.auth.user) {
-              this.setState(prevState => {
-                return {
-                  ...prevState,
-                  restrictUpdateState: true,
-                  messages: prevState.messages.concat(
-                    element.doc._data.message,
-                  ),
-                };
-              });
-            }
-          });
-        }
+          }
+        });
 
         setTimeout(() => {
           this.setState({
