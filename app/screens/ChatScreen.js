@@ -92,14 +92,12 @@ export class ChatScreen extends Component {
               });
             }
           });
-          setTimeout =
-            (() => {
-              this.setState({
-                restrictUpdateState: false,
-              });
-            },
-            1000);
         }
+        setTimeout(() => {
+          this.setState({
+            restrictUpdateState: false,
+          });
+        }, 1000);
       });
   }
 
