@@ -70,7 +70,7 @@ export class ChatScreen extends Component {
     const unsubscribe = firestore()
       .collection('messages')
       .onSnapshot(querySnapshot => {
-        // console.log('querySnapshot', querySnapshot);//
+        console.log('querySnapshot', querySnapshot);
 
         // console.log('Total users', querySnapshot.size);
         // console.log('User Documents', querySnapshot.docs);
@@ -138,7 +138,7 @@ export class ChatScreen extends Component {
       //reset state deleting to false
       setTimeout(() => {
         this.setState({deleting: false});
-      }, 1000);
+      }, 2000);
     }
   }
 
@@ -164,7 +164,7 @@ export class ChatScreen extends Component {
               const docToDelete = res._docs.find(elem => {
                 return elem._data.message._id === message._id;
               });
-              // console.log('docToDelete.id', docToDelete.id);
+              console.log('docToDelete.id', docToDelete.id);
               db.doc(docToDelete.id)
                 .delete()
                 .then(() => {
