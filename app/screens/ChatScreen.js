@@ -155,9 +155,6 @@ export class ChatScreen extends Component {
       buttonIndex => {
         switch (buttonIndex) {
           case 0:
-            //SelectedPost in Redux
-            this.props.selectPost(message);
-
             // this._updateState(message._id);
             // //Delete Post from DB
             // console.log('message', message);
