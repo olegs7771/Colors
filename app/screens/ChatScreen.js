@@ -22,7 +22,6 @@ export class ChatScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: null,
       messages: [],
       restrictDump: false,
       restrictUpdateState: false,
