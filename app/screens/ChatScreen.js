@@ -86,11 +86,17 @@ export class ChatScreen extends Component {
               this.setState(prevState => {
                 return {
                   ...prevState,
+                  restrictDump: true,
                   messages: prevState.messages.filter(elem => {
                     return elem._id !== element.doc._data.message._id;
                   }),
                 };
               });
+              setTimeout(() => {
+                this.setState({
+                  restrictDump: false,
+                });
+              }, 2000);
             }
             //When Message been added on Server
             if (element.type === 'added') {
