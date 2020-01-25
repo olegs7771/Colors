@@ -79,6 +79,8 @@ export class ChatScreen extends Component {
             //When message been removed on server
             ////////////////////////////////////
             if (element.type === 'removed') {
+              console.log('removed!');
+
               console.log('element to delete', element.doc._data.message._id);
 
               // Remove Message from State
@@ -93,11 +95,14 @@ export class ChatScreen extends Component {
             }
             //When Message been added on Server
             if (element.type === 'added') {
+              console.log('added!');
+
               const message = element.doc._data.message;
               this.setState(prevState => {
                 return {
                   ...prevState,
                   messages: prevState.messages.concat(message),
+                  restrictDump: true,
                 };
               });
             }
@@ -147,22 +152,22 @@ export class ChatScreen extends Component {
 
     //Delete Post
     //Updating state for SameUser
-    if (prevProps.post !== this.props.post) {
-      this.setState(prevState => {
-        return {
-          ...prevState,
-          deleting: true,
+    // if (prevProps.post !== this.props.post) {
+    //   this.setState(prevState => {
+    //     return {
+    //       ...prevState,
+    //       deleting: true,
 
-          messages: prevState.messages.filter(element => {
-            return element._id !== this.props.post.selectedPost._id;
-          }),
-        };
-      });
-      //reset state deleting to false
-      setTimeout(() => {
-        this.setState({deleting: false});
-      }, 2000);
-    }
+    //       messages: prevState.messages.filter(element => {
+    //         return element._id !== this.props.post.selectedPost._id;
+    //       }),
+    //     };
+    //   });
+    //   //reset state deleting to false
+    //   setTimeout(() => {
+    //     this.setState({deleting: false});
+    //   }, 2000);
+    // }
   }
 
   onLongPress(context, message) {
