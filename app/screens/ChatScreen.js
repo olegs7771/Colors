@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   Alert,
   Clipboard,
+  TouchableOpacity,
 } from 'react-native';
 
 import {connect} from 'react-redux';
@@ -45,14 +46,14 @@ export class ChatScreen extends Component {
 
         response._docs.forEach(element => {
           //Add to state& prevent dump to server after CDM
-          if (!this.state.messages.length > 0)
-            this.setState(prevState => {
-              return {
-                ...prevState,
-                messages: prevState.messages.concat(element._data.message),
-                restrictDump: true,
-              };
-            });
+
+          this.setState(prevState => {
+            return {
+              ...prevState,
+              messages: prevState.messages.concat(element._data.message),
+              restrictDump: true,
+            };
+          });
         });
       });
 
@@ -240,13 +241,13 @@ export class ChatScreen extends Component {
 
     if (Platform.OS === 'android') {
       return (
-        <KeyboardAvoidingView
+        <View
           style={{flex: 1}}
           behavior="padding"
           keyboardVerticalOffset={30}
           enabled>
           {chat}
-        </KeyboardAvoidingView>
+        </View>
       );
     }
     return <SafeAreaView style={{flex: 1}}>{chat}</SafeAreaView>;
