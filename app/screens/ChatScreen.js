@@ -60,9 +60,9 @@ export class ChatScreen extends Component {
       this.setState({
         restrictDump: false,
       });
-    }, 1000);
-    // Subscribe to user updates in 1000ms after CDM
+    }, 2000);
 
+    // Subscribe to user updates in 1000ms after CDM
     const unsubscribe = firestore()
       .collection('messages')
       .onSnapshot(querySnapshot => {
@@ -77,6 +77,7 @@ export class ChatScreen extends Component {
           const loggedUser = this.props.auth.user;
           if (!ChatSameUser(loggedUser, messageUser)) {
             //When message been removed on server
+            ////////////////////////////////////
             if (element.type === 'removed') {
               console.log('element to delete', element.doc._data.message._id);
 
