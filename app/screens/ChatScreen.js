@@ -61,76 +61,76 @@ export class ChatScreen extends Component {
       });
     }, 2000);
 
-    // // Subscribe to user updates in 1000ms after CDM
-    // const unsubscribe = firestore()
-    //   .collection('messages')
-    //   .onSnapshot(querySnapshot => {
-    //     // console.log('querySnapshot on change', querySnapshot);
+    // Subscribe to user updates in 1000ms after CDM
+    const unsubscribe = firestore()
+      .collection('messages')
+      .onSnapshot(querySnapshot => {
+        // console.log('querySnapshot on change', querySnapshot);
 
-    //     const {_changes, _docs, size} = querySnapshot;
-    //     console.log('there is change');
-    //     querySnapshot._changes.forEach(element => {
-    //       // console.log('element', element);
-    //       // console.log('element.type', element.type);
-    //       const messageUser = element.doc._data.message.user.user;
-    //       const loggedUser = this.props.auth.user;
-    //       if (!ChatSameUser(loggedUser, messageUser)) {
-    //         //When message been removed on server
-    //         ////////////////////////////////////
-    //         if (element.type === 'removed') {
-    //           console.log('removed!');
+        const {_changes, _docs, size} = querySnapshot;
+        console.log('there is change');
+        querySnapshot._changes.forEach(element => {
+          // console.log('element', element);
+          // console.log('element.type', element.type);
+          const messageUser = element.doc._data.message.user.user;
+          const loggedUser = this.props.auth.user;
+          if (!ChatSameUser(loggedUser, messageUser)) {
+            //When message been removed on server
+            ////////////////////////////////////
+            if (element.type === 'removed') {
+              console.log('removed!');
 
-    //           console.log('element to delete', element.doc._data.message._id);
+              console.log('element to delete', element.doc._data.message._id);
 
-    //           // Remove Message from State
-    //           this.setState(prevState => {
-    //             return {
-    //               ...prevState,
-    //               messages: prevState.messages.filter(elem => {
-    //                 return elem._id !== element.doc._data.message._id;
-    //               }),
-    //             };
-    //           });
-    //         }
-    //         //When Message been added on Server
-    //         if (element.type === 'added') {
-    //           console.log('added!');
+              // Remove Message from State
+              this.setState(prevState => {
+                return {
+                  ...prevState,
+                  messages: prevState.messages.filter(elem => {
+                    return elem._id !== element.doc._data.message._id;
+                  }),
+                };
+              });
+            }
+            //When Message been added on Server
+            if (element.type === 'added') {
+              console.log('added!');
 
-    //           const message = element.doc._data.message;
-    //           this.setState(prevState => {
-    //             return {
-    //               ...prevState,
-    //               messages: prevState.messages.concat(message),
-    //               restrictDump: true,
-    //             };
-    //           });
-    //           setTimeout(() => {
-    //             this.setState({
-    //               restrictDump: false,
-    //             });
-    //           }, 2000);
-    //         }
-    //       }
+              const message = element.doc._data.message;
+              this.setState(prevState => {
+                return {
+                  ...prevState,
+                  messages: prevState.messages.concat(message),
+                  restrictDump: true,
+                };
+              });
+              setTimeout(() => {
+                this.setState({
+                  restrictDump: false,
+                });
+              }, 2000);
+            }
+          }
 
-    //       // const messageUser = element.doc._data.message.user.user;
-    //       // const loggedUser = this.props.auth.user;
+          // const messageUser = element.doc._data.message.user.user;
+          // const loggedUser = this.props.auth.user;
 
-    //       // if (!ChatSameUser(loggedUser, messageUser)) {
-    //       // if (element.size < 2) {
-    //       // if (_changes.length !== _docs.length) {
-    //       // console.log('there is change');
+          // if (!ChatSameUser(loggedUser, messageUser)) {
+          // if (element.size < 2) {
+          // if (_changes.length !== _docs.length) {
+          // console.log('there is change');
 
-    //       // }
-    //       // }
-    //       // }
-    //     });
+          // }
+          // }
+          // }
+        });
 
-    //     setTimeout(() => {
-    //       this.setState({
-    //         restrictUpdateState: false,
-    //       });
-    //     }, 1000);
-    //   });
+        setTimeout(() => {
+          this.setState({
+            restrictUpdateState: false,
+          });
+        }, 1000);
+      });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -154,24 +154,24 @@ export class ChatScreen extends Component {
       }
     }
 
-    //Delete Post
-    //Updating state for SameUser
-    // if (prevProps.post !== this.props.post) {
-    //   this.setState(prevState => {
-    //     return {
-    //       ...prevState,
-    //       deleting: true,
+    // Delete Post
+    // Updating state for SameUser
+    if (prevProps.post !== this.props.post) {
+      this.setState(prevState => {
+        return {
+          ...prevState,
+          deleting: true,
 
-    //       messages: prevState.messages.filter(element => {
-    //         return element._id !== this.props.post.selectedPost._id;
-    //       }),
-    //     };
-    //   });
-    //   //reset state deleting to false
-    //   setTimeout(() => {
-    //     this.setState({deleting: false});
-    //   }, 2000);
-    // }
+          messages: prevState.messages.filter(element => {
+            return element._id !== this.props.post.selectedPost._id;
+          }),
+        };
+      });
+      //reset state deleting to false
+      setTimeout(() => {
+        this.setState({deleting: false});
+      }, 2000);
+    }
   }
 
   onLongPress(context, message) {
