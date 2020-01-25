@@ -74,6 +74,8 @@ export class ChatScreen extends Component {
           // console.log('element', element);
           // console.log('element.type', element.type);
 
+          //When message been removed on server
+          ////////////////////////////////////
           if (element.type === 'removed') {
             console.log('removed!');
 
@@ -83,6 +85,7 @@ export class ChatScreen extends Component {
             this.setState(prevState => {
               return {
                 ...prevState,
+                restrictUpdateState: true,
                 restrictDump: true,
                 messages: prevState.messages.filter(elem => {
                   return elem._id !== element.doc._data.message._id;
@@ -92,15 +95,13 @@ export class ChatScreen extends Component {
             setTimeout(() => {
               this.setState({
                 restrictDump: false,
+                restrictUpdateState: false,
               });
             }, 2000);
           }
           const messageUser = element.doc._data.message.user.user;
           const loggedUser = this.props.auth.user;
           if (!ChatSameUser(loggedUser, messageUser)) {
-            //When message been removed on server
-            ////////////////////////////////////
-
             //When Message been added on Server
             if (element.type === 'added') {
               console.log('added!');
