@@ -136,11 +136,11 @@ export class ChatScreen extends Component {
         !this.state.restrictDump &&
         !this.state.deleting
       ) {
-        db.add({
-          message,
-        }).then(ref => {
-          console.log(' added  message ref.id', ref.id);
-        });
+        // db.add({
+        //   message,
+        // }).then(ref => {
+        //   console.log(' added  message ref.id', ref.id);
+        // });
       }
     }
 
