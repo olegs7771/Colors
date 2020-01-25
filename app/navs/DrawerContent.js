@@ -33,6 +33,16 @@ class DrawerContent extends Component {
       });
   };
 
+  _openPicker = () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true,
+    }).then(image => {
+      console.log(image);
+    });
+  };
+
   render() {
     return (
       <View style={styles.container}>
@@ -61,9 +71,11 @@ class DrawerContent extends Component {
         </TouchableOpacity>
 
         <View style={styles.containerAvatar}>
-          <View style={styles.containerAvatarTitle}>
-            <Text style={{fontSize: 16, fontWeight: 'bold'}}>Pick Avatar</Text>
-          </View>
+          <TouchableOpacity
+            style={styles.containerButton}
+            onPress={this._openPicker}>
+            <Text style={{color: '#FFF'}}>Pick Avatar</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -97,14 +109,15 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   containerAvatar: {
-    borderWidth: 1,
     width: '80%',
-    height: 300,
     marginTop: 20,
-  },
-  containerAvatarTitle: {
-    borderWidth: 1,
     alignItems: 'center',
+  },
+  containerButton: {
+    width: '50%',
+    alignItems: 'center',
+    backgroundColor: '#7575a3',
+    borderRadius: 5,
     paddingVertical: 10,
   },
 });
