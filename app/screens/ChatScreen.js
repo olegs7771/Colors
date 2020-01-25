@@ -72,32 +72,34 @@ export class ChatScreen extends Component {
         querySnapshot._changes.forEach(element => {
           // console.log('element', element);
           // console.log('element.type', element.type);
+
+          if (element.type === 'removed') {
+            console.log('removed!');
+
+            console.log('element to delete', element.doc._data.message._id);
+
+            // Remove Message from State
+            this.setState(prevState => {
+              return {
+                ...prevState,
+                restrictDump: true,
+                messages: prevState.messages.filter(elem => {
+                  return elem._id !== element.doc._data.message._id;
+                }),
+              };
+            });
+            setTimeout(() => {
+              this.setState({
+                restrictDump: false,
+              });
+            }, 2000);
+          }
           const messageUser = element.doc._data.message.user.user;
           const loggedUser = this.props.auth.user;
           if (!ChatSameUser(loggedUser, messageUser)) {
             //When message been removed on server
             ////////////////////////////////////
-            if (element.type === 'removed') {
-              console.log('removed!');
 
-              console.log('element to delete', element.doc._data.message._id);
-
-              // Remove Message from State
-              this.setState(prevState => {
-                return {
-                  ...prevState,
-                  restrictDump: true,
-                  messages: prevState.messages.filter(elem => {
-                    return elem._id !== element.doc._data.message._id;
-                  }),
-                };
-              });
-              setTimeout(() => {
-                this.setState({
-                  restrictDump: false,
-                });
-              }, 2000);
-            }
             //When Message been added on Server
             if (element.type === 'added') {
               console.log('added!');
