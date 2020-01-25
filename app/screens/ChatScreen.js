@@ -66,7 +66,7 @@ export class ChatScreen extends Component {
     const unsubscribe = firestore()
       .collection('messages')
       .onSnapshot(querySnapshot => {
-        console.log('querySnapshot on change', querySnapshot);
+        // console.log('querySnapshot on change', querySnapshot);
 
         const {_changes, _docs, size} = querySnapshot;
         console.log('there is change');
@@ -105,6 +105,11 @@ export class ChatScreen extends Component {
                   restrictDump: true,
                 };
               });
+              setTimeout(() => {
+                this.setState({
+                  restrictDump: false,
+                });
+              }, 2000);
             }
           }
 
