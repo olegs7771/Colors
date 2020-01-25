@@ -45,7 +45,7 @@ export class ChatScreen extends Component {
 
         response._docs.forEach(element => {
           //Add to state& prevent dump to server after CDM
-          if (!this.state.restrictUpdateState)
+          if (!this.state.messages.length > 0)
             this.setState(prevState => {
               return {
                 ...prevState,
