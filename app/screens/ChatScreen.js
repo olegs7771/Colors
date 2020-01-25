@@ -45,13 +45,14 @@ export class ChatScreen extends Component {
 
         response._docs.forEach(element => {
           //Add to state& prevent dump to server after CDM
-          this.setState(prevState => {
-            return {
-              ...prevState,
-              messages: prevState.messages.concat(element._data.message),
-              restrictDump: true,
-            };
-          });
+          if (!this.state.restrictUpdateState)
+            this.setState(prevState => {
+              return {
+                ...prevState,
+                messages: prevState.messages.concat(element._data.message),
+                restrictDump: true,
+              };
+            });
         });
       });
 
