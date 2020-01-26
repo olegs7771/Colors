@@ -43,16 +43,17 @@ export class ChatScreen extends Component {
       .get()
       .then(response => {
         console.log('response', response);
+        if (response) {
+          console.log('there is response');
+        }
 
-        response._docs.forEach(element => {
+        response.docs.forEach(element => {
           //Add to state& prevent dump to server after CDM
+          console.log('element cdm', element);
 
-          this.setState(prevState => {
-            return {
-              ...prevState,
-              messages: prevState.messages.concat(element._data.message),
-              restrictDump: true,
-            };
+          this.setState({
+            messages: prevState.messages.concat(element._data.message),
+            restrictDump: true,
           });
         });
       });
@@ -150,7 +151,7 @@ export class ChatScreen extends Component {
       !this.state.restrictUpdateState
     ) {
       const message = this.state.messages[0];
-      console.log('message', message);
+      console.log('message!', message);
       console.log('state updated!');
       if (
         message !== undefined &&
@@ -183,6 +184,12 @@ export class ChatScreen extends Component {
         this.setState({deleting: false});
       }, 2000);
     }
+  }
+
+  componentWillUnmount() {
+    console.log('unmounted');
+
+    this.setState({messages: []});
   }
 
   onLongPress(context, message) {
