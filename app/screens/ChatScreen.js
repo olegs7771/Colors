@@ -51,9 +51,11 @@ export class ChatScreen extends Component {
           //Add to state& prevent dump to server after CDM
           console.log('element cdm', element);
 
-          this.setState({
-            messages: prevState.messages.concat(element._data.message),
-            restrictDump: true,
+          this.setState(prevState => {
+            return {
+              messages: prevState.messages.concat(element._data.message),
+              restrictDump: true,
+            };
           });
         });
       });
