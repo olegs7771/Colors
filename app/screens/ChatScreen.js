@@ -22,6 +22,9 @@ const db = firestore().collection('messages');
 export class ChatScreen extends Component {
   constructor(props) {
     super(props);
+    //Subscribe for Updates
+    this._subscribe();
+
     this.state = {
       messages: [],
       restrictDump: false,
@@ -36,36 +39,8 @@ export class ChatScreen extends Component {
     }));
   };
 
-  componentDidMount() {
-    console.log('mounted');
-    firestore()
-      .collection('messages')
-      .get()
-      .then(response => {
-        console.log('response', response);
-        if (response) {
-          console.log('there is response');
-        }
-
-        response.docs.forEach(element => {
-          //Add to state& prevent dump to server after CDM
-          console.log('element cdm', element);
-
-          this.setState(prevState => {
-            return {
-              messages: prevState.messages.concat(element._data.message),
-              restrictDump: true,
-            };
-          });
-        });
-      });
-
-    setTimeout(() => {
-      this.setState({
-        restrictDump: false,
-      });
-    }, 2000);
-
+  //Subscribe for Updates
+  _subscribe = () => {
     // Subscribe to user updates in 1000ms after CDM
     const unsubscribe = firestore()
       .collection('messages')
@@ -105,7 +80,7 @@ export class ChatScreen extends Component {
           }
           const messageUser = element.doc._data.message.user.user;
           const loggedUser = this.props.auth.user;
-          if (!ChatSameUser(loggedUser, messageUser)) {
+          if (ChatSameUser(loggedUser, messageUser)) {
             //When Message been added on Server
             if (element.type === 'added') {
               console.log('added!');
@@ -145,6 +120,42 @@ export class ChatScreen extends Component {
           });
         }, 1000);
       });
+  };
+
+  componentDidMount() {
+    console.log('mounted');
+    firestore()
+      .collection('messages')
+      .get()
+      .then(response => {
+        console.log('response', response);
+        if (response) {
+          console.log('there is response');
+        }
+
+        response.docs.forEach(element => {
+          //Filter messages.Omit those which already in state
+
+          //Add to state& prevent dump to server after CDM
+          console.log('element cdm', element._data.message.user.user);
+          // if(ChatSameUser(this.props.auth.user,element._data.message.user.user)){
+
+          // }
+
+          this.setState(prevState => {
+            return {
+              messages: prevState.messages.concat(element._data.message),
+              restrictDump: true,
+            };
+          });
+        });
+      });
+
+    setTimeout(() => {
+      this.setState({
+        restrictDump: false,
+      });
+    }, 2000);
   }
 
   componentDidUpdate(prevProps, prevState) {
