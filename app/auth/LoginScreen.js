@@ -51,15 +51,27 @@ class LoginScreen extends Component {
     await firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .then(res =>
-        AsyncStorage.setItem('email', email).then(() => {
-          //To Redux
-          this.props.getAuth({email});
-          this.props.navigation.navigate('Home', {
-            email: this.state.form.email,
+      .then(res => {
+        //Create data for auth action
+        const data = {
+          email: res.user.email,
+          _id: res.user.uid,
+        };
+
+        //Set AsyncStorage
+        AsyncStorage.setItem('user', JSON.stringify(data))
+          .then(() => {
+            //To Redux
+            this.props.getAuth(data);
+            // Navigate to home
+            this.props.navigation.navigate('Home', {
+              email: this.state.form.email,
+            });
+          })
+          .catch(err => {
+            console.log('error itemSet()');
           });
-        }),
-      )
+      })
       .catch(err => {
         console.log('err :', err['message']);
         const errEdited = err['message'].toString().substring(21);

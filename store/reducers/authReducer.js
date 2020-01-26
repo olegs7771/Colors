@@ -10,7 +10,10 @@ export default (state = initialState, action) => {
     case GET_AUTH:
       return {
         ...state,
-        user: action.payload.email,
+        user: {
+          email: action.payload.email,
+          _id: action.payload._id,
+        },
         isAuthenticated: true,
       };
     case LOGOUT_USER:

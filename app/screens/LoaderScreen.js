@@ -12,8 +12,11 @@ class LoaderScreen extends Component {
   }
 
   _retrieveData = async () => {
-    await AsyncStorage.getItem('email')
-      .then(email => {
+    await AsyncStorage.getItem('user')
+      .then(user => {
+        JSON.parse(user);
+        console.log('user ::', user);
+
         //Redux
         if (email) {
           this.props.getAuth({email});

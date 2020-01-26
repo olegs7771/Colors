@@ -16,7 +16,7 @@ import {connect} from 'react-redux';
 import {selectPost} from '../../store/actions/postAction';
 import {GiftedChat} from 'react-native-gifted-chat';
 import firestore from '@react-native-firebase/firestore';
-import ChatSameUser from '../misc/ChatSameUser';
+
 const db = firestore().collection('messages');
 
 export class ChatScreen extends Component {
@@ -205,6 +205,10 @@ export class ChatScreen extends Component {
   }
 
   render() {
+    this.state.messages.forEach(message => {
+      console.log('message.text', message.text);
+    });
+
     const chat = (
       <GiftedChat
         messages={this.state.messages}
@@ -213,6 +217,7 @@ export class ChatScreen extends Component {
         onLongPress={this.onLongPress}
         props={this.props}
         state={this.state}
+        showUserAvatar={true}
       />
     );
 
