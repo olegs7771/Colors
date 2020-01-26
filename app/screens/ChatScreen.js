@@ -22,34 +22,43 @@ const db = firestore().collection('messages');
 export class ChatScreen extends Component {
   constructor(props) {
     super(props);
-    //Subscribe for Updates
-    this._subscribe();
 
     this.state = {
       messages: [],
       restrictDump: false,
       restrictUpdateState: false,
       deleting: false,
+      restrictAddType: false,
     };
   }
 
   _onSend = (messages = []) => {
     this.setState(prevState => ({
+      restrictAddType: true,
       messages: GiftedChat.append(prevState.messages, messages),
     }));
+
+    setTimeout(() => {
+      this.setState({
+        restrictAddType: false,
+      });
+    }, 2000);
   };
 
-  //Subscribe for Updates
-  _subscribe = () => {
+  componentDidMount() {
     // Subscribe to user updates in 1000ms after CDM
     const unsubscribe = firestore()
       .collection('messages')
       .onSnapshot(querySnapshot => {
         // console.log('querySnapshot on change', querySnapshot);
+        console.log('querySnapshot', querySnapshot);
 
         const {_changes, _docs, size} = querySnapshot;
         console.log('there is change');
         querySnapshot._changes.forEach(element => {
+          console.log('element CDM', element.doc._data.message);
+          console.log('element CDM type', element.type);
+
           // console.log('element', element);
           // console.log('element.type', element.type);
 
@@ -80,12 +89,14 @@ export class ChatScreen extends Component {
           }
           const messageUser = element.doc._data.message.user.user;
           const loggedUser = this.props.auth.user;
-          if (!ChatSameUser(loggedUser, messageUser)) {
-            //When Message been added on Server
-            if (element.type === 'added') {
-              console.log('added!');
 
-              const message = element.doc._data.message;
+          //When Message been added on Server
+          if (element.type === 'added') {
+            console.log('added!');
+
+            const message = element.doc._data.message;
+            //If User made message prevent while type added
+            if (!this.state.restrictAddType) {
               this.setState(prevState => {
                 return {
                   ...prevState,
@@ -93,25 +104,13 @@ export class ChatScreen extends Component {
                   restrictDump: true,
                 };
               });
-              setTimeout(() => {
-                this.setState({
-                  restrictDump: false,
-                });
-              }, 2000);
             }
+            setTimeout(() => {
+              this.setState({
+                restrictDump: false,
+              });
+            }, 2000);
           }
-
-          // const messageUser = element.doc._data.message.user.user;
-          // const loggedUser = this.props.auth.user;
-
-          // if (!ChatSameUser(loggedUser, messageUser)) {
-          // if (element.size < 2) {
-          // if (_changes.length !== _docs.length) {
-          // console.log('there is change');
-
-          // }
-          // }
-          // }
         });
 
         setTimeout(() => {
@@ -120,42 +119,6 @@ export class ChatScreen extends Component {
           });
         }, 1000);
       });
-  };
-
-  componentDidMount() {
-    console.log('mounted');
-    firestore()
-      .collection('messages')
-      .get()
-      .then(response => {
-        console.log('response', response);
-        if (response) {
-          console.log('there is response');
-        }
-
-        response.docs.forEach(element => {
-          //Filter messages.Omit those which already in state
-
-          //Add to state& prevent dump to server after CDM
-          console.log('element cdm', element._data.message.user.user);
-          // if(ChatSameUser(this.props.auth.user,element._data.message.user.user)){
-
-          // }
-
-          this.setState(prevState => {
-            return {
-              messages: prevState.messages.concat(element._data.message),
-              restrictDump: true,
-            };
-          });
-        });
-      });
-
-    setTimeout(() => {
-      this.setState({
-        restrictDump: false,
-      });
-    }, 2000);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -197,12 +160,6 @@ export class ChatScreen extends Component {
         this.setState({deleting: false});
       }, 2000);
     }
-  }
-
-  componentWillUnmount() {
-    console.log('unmounted');
-
-    this.setState({messages: []});
   }
 
   onLongPress(context, message) {
