@@ -80,26 +80,26 @@ export class ChatScreen extends Component {
           }
           const messageUser = element.doc._data.message.user.user;
           const loggedUser = this.props.auth.user;
-          // if (!ChatSameUser(loggedUser, messageUser)) {
-          //   //When Message been added on Server
-          //   if (element.type === 'added') {
-          //     console.log('added!');
+          if (!ChatSameUser(loggedUser, messageUser)) {
+            //When Message been added on Server
+            if (element.type === 'added') {
+              console.log('added!');
 
-          //     const message = element.doc._data.message;
-          //     this.setState(prevState => {
-          //       return {
-          //         ...prevState,
-          //         messages: prevState.messages.concat(message),
-          //         restrictDump: true,
-          //       };
-          //     });
-          //     setTimeout(() => {
-          //       this.setState({
-          //         restrictDump: false,
-          //       });
-          //     }, 2000);
-          //   }
-          // }
+              const message = element.doc._data.message;
+              this.setState(prevState => {
+                return {
+                  ...prevState,
+                  messages: prevState.messages.concat(message),
+                  restrictDump: true,
+                };
+              });
+              setTimeout(() => {
+                this.setState({
+                  restrictDump: false,
+                });
+              }, 2000);
+            }
+          }
 
           // const messageUser = element.doc._data.message.user.user;
           // const loggedUser = this.props.auth.user;
