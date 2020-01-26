@@ -80,7 +80,7 @@ export class ChatScreen extends Component {
           }
           const messageUser = element.doc._data.message.user.user;
           const loggedUser = this.props.auth.user;
-          if (ChatSameUser(loggedUser, messageUser)) {
+          if (!ChatSameUser(loggedUser, messageUser)) {
             //When Message been added on Server
             if (element.type === 'added') {
               console.log('added!');
