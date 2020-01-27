@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, View, TouchableOpacity} from 'react-native';
+import {Text, StyleSheet, View, TouchableOpacity, Image} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 import {connect} from 'react-redux';
@@ -9,21 +9,16 @@ import ImagePicker from 'react-native-image-crop-picker';
 class DrawerContent extends Component {
   constructor(props) {
     super(props);
-    this._retreive();
-
     this.state = {
       email: null,
+      isImagePicked: false,
+      fileURI: null,
+      fileTYPE: null,
     };
   }
 
-  _retreive = async () => {
-    AsyncStorage.getItem('email').then(email => {
-      this.setState({email});
-    });
-  };
-
   _logOutUser = () => {
-    AsyncStorage.removeItem('email')
+    AsyncStorage.removeItem('user')
       .then(() => {
         this.props.logoutUser();
         this.props.navigation.navigate('Login');
@@ -38,17 +33,40 @@ class DrawerContent extends Component {
       width: 300,
       height: 400,
       cropping: true,
-    }).then(image => {
-      console.log(image);
-    });
+    })
+      .then(image => {
+        console.log(image);
+        this.setState(prevState => {
+          return {
+            ...prevState,
+            fileURI: image.path,
+            fileTYPE: image.mime,
+            isImagePicked: true,
+          };
+        });
+      })
+      .catch(err => {
+        console.log('err ', err);
+      });
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.auth !== this.props.auth) {
+      this.setState(prevState => {
+        return {
+          ...prevState,
+          email: this.props.auth.user.email,
+        };
+      });
+    }
+  }
 
   render() {
     return (
       <View style={styles.container}>
         <TouchableOpacity style={styles.containerUser}>
           <Text style={{fontSize: 20, fontWeight: 'bold', color: '#FFF'}}>
-            User : {this.state.email}{' '}
+            User : {this.props.auth.user.email}{' '}
           </Text>
         </TouchableOpacity>
 
@@ -76,12 +94,34 @@ class DrawerContent extends Component {
             onPress={this._openPicker}>
             <Text style={{color: '#FFF'}}>Pick Avatar</Text>
           </TouchableOpacity>
+
+          {this.state.fileURI && (
+            <View style={styles.containerImage}>
+              <Image
+                source={{uri: this.state.fileURI}}
+                style={{width: '100%', height: 200}}
+              />
+            </View>
+          )}
+
+          <View style={styles.containerCombineButtons}>
+            <TouchableOpacity style={styles.CancelButton}>
+              <Text style={{color: '#FFF'}}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.AcceptButton}>
+              <Text style={{color: '#FFF'}}>Accept</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     );
   }
 }
-export default connect(null, {logoutUser})(DrawerContent);
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+});
+export default connect(mapStateToProps, {logoutUser})(DrawerContent);
 
 const styles = StyleSheet.create({
   container: {
@@ -93,13 +133,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 5,
     marginTop: 20,
-    backgroundColor: '#7575a3',
+    backgroundColor: '#007ab3',
     borderRadius: 5,
     paddingHorizontal: 10,
   },
   containerLog: {
     flexDirection: 'row',
-    backgroundColor: '#7575a3',
+    backgroundColor: '#007ab3',
     padding: 7,
     width: '40%',
     marginTop: 20,
@@ -116,8 +156,29 @@ const styles = StyleSheet.create({
   containerButton: {
     width: '50%',
     alignItems: 'center',
-    backgroundColor: '#7575a3',
+    backgroundColor: '#007ab3',
     borderRadius: 5,
     paddingVertical: 10,
+  },
+  containerImage: {
+    width: '80%',
+    marginTop: 30,
+    borderRadius: 5,
+  },
+  containerCombineButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 30,
+    width: '80%',
+  },
+  CancelButton: {
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: '#007ab3',
+  },
+  AcceptButton: {
+    padding: 10,
+    borderRadius: 5,
+    backgroundColor: '#007ab3',
   },
 });

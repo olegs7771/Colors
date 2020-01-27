@@ -14,15 +14,16 @@ class LoaderScreen extends Component {
   _retrieveData = async () => {
     await AsyncStorage.getItem('user')
       .then(user => {
-        JSON.parse(user);
-        console.log('user ::', user);
+        // JSON.parse(email);
+
+        const data = JSON.parse(user);
+        console.log('data', data);
 
         //Redux
-        if (email) {
-          this.props.getAuth({email});
+        if (user) {
+          this.props.getAuth(data);
         }
-        this.props.navigation.navigate(email ? 'App' : 'Auth');
-        console.log('email', email);
+        this.props.navigation.navigate(user ? 'App' : 'Auth');
       })
       .catch(err => {
         console.log('err:', err);

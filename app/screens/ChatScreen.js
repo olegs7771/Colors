@@ -213,7 +213,10 @@ export class ChatScreen extends Component {
       <GiftedChat
         messages={this.state.messages}
         onSend={messages => this._onSend(messages)}
-        user={{user: this.props.auth.user}}
+        user={{
+          email: this.props.auth.user.email,
+          _id: this.props.auth.user._id,
+        }}
         onLongPress={this.onLongPress}
         props={this.props}
         state={this.state}
