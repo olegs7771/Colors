@@ -17,7 +17,6 @@ class LoaderScreen extends Component {
         // JSON.parse(email);
 
         const data = JSON.parse(user);
-        console.log('data', data);
 
         //Redux
         if (user) {

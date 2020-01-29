@@ -16,6 +16,7 @@ import {connect} from 'react-redux';
 import {selectPost} from '../../store/actions/postAction';
 import {GiftedChat} from 'react-native-gifted-chat';
 import firestore from '@react-native-firebase/firestore';
+import ChatSameUser from '../misc/ChatSameUser';
 
 const db = firestore().collection('messages');
 
@@ -25,7 +26,7 @@ export class ChatScreen extends Component {
 
     this.state = {
       messages: [],
-      restrictDump: false,
+      restrictDumpToServer: false,
       restrictUpdateState: false,
       deleting: false,
       restrictAddType: false,
@@ -42,25 +43,61 @@ export class ChatScreen extends Component {
       this.setState({
         restrictAddType: false,
       });
-    }, 2000);
+    }, 10000);
   };
 
   componentDidMount() {
     // Subscribe to user updates in 1000ms after CDM
     const unsubscribe = firestore()
       .collection('messages')
-      .onSnapshot(querySnapshot => {
-        // console.log('querySnapshot on change', querySnapshot);
-        console.log('querySnapshot', querySnapshot);
 
+      .onSnapshot(querySnapshot => {
         const {_changes, _docs, size} = querySnapshot;
-        console.log('there is change');
-        querySnapshot._changes.forEach(element => {
+
+        console.log('querySnapshot', querySnapshot._changes);
+        const sortedByDate = querySnapshot._changes.sort((a, b) => {
+          const timeA = a.doc._data.message.createdAt._seconds;
+          const timeB = b.doc._data.message.createdAt._seconds;
+          if (timeA > timeB) return -1;
+          if (timeB > timeA) return 1;
+          return 0;
+        });
+        console.log('sortedByDate', sortedByDate);
+
+        sortedByDate.forEach(element => {
           console.log('element CDM', element.doc._data.message);
-          console.log('element CDM type', element.type);
+          // console.log('element CDM type', element.type);
 
           // console.log('element', element);
           // console.log('element.type', element.type);
+
+          //When Message been added on Server
+          if (element.type === 'added') {
+            const message = element.doc._data.message;
+            console.log('message from db', message.createdAt._seconds);
+
+            const messageTimeFixed = {
+              ...message,
+              createdAt: message.createdAt.toDate(),
+            };
+
+            //If User made message prevent while type added
+            if (!this.state.restrictAddType) {
+              this.setState(prevState => {
+                return {
+                  ...prevState,
+                  messages: prevState.messages.concat(messageTimeFixed),
+                  restrictDumpToServer: true,
+                };
+              });
+            }
+            setTimeout(() => {
+              this.setState({
+                restrictDumpToServer: false,
+                restrictUpdateState: false,
+              });
+            }, 2000);
+          }
 
           //When message been removed on server
           ////////////////////////////////////
@@ -74,7 +111,7 @@ export class ChatScreen extends Component {
               return {
                 ...prevState,
                 restrictUpdateState: true,
-                restrictDump: true,
+                restrictDumpToServer: true,
                 messages: prevState.messages.filter(elem => {
                   return elem._id !== element.doc._data.message._id;
                 }),
@@ -82,35 +119,13 @@ export class ChatScreen extends Component {
             });
             setTimeout(() => {
               this.setState({
-                restrictDump: false,
+                restrictDumpToServer: false,
                 restrictUpdateState: false,
               });
             }, 2000);
           }
           const messageUser = element.doc._data.message.user.user;
           const loggedUser = this.props.auth.user;
-
-          //When Message been added on Server
-          if (element.type === 'added') {
-            console.log('added!');
-
-            const message = element.doc._data.message;
-            //If User made message prevent while type added
-            if (!this.state.restrictAddType) {
-              this.setState(prevState => {
-                return {
-                  ...prevState,
-                  messages: prevState.messages.concat(message),
-                  restrictDump: true,
-                };
-              });
-            }
-            setTimeout(() => {
-              this.setState({
-                restrictDump: false,
-              });
-            }, 2000);
-          }
         });
 
         setTimeout(() => {
@@ -127,11 +142,11 @@ export class ChatScreen extends Component {
       !this.state.restrictUpdateState
     ) {
       const message = this.state.messages[0];
-      console.log('message!', message);
-      console.log('state updated!');
+      // console.log('message CDU!', message);
+      // console.log('state updated!');
       if (
         message !== undefined &&
-        !this.state.restrictDump &&
+        !this.state.restrictDumpToServer &&
         !this.state.deleting
       ) {
         db.add({
@@ -205,29 +220,26 @@ export class ChatScreen extends Component {
   }
 
   render() {
-    this.state.messages.forEach(message => {
-      console.log('message.text', message.text);
-    });
-
     const chat = (
       <GiftedChat
         messages={this.state.messages}
         onSend={messages => this._onSend(messages)}
         user={{
-          email: this.props.auth.user.email,
           _id: this.props.auth.user._id,
+          email: this.props.auth.user.email,
         }}
         onLongPress={this.onLongPress}
         props={this.props}
         state={this.state}
         showUserAvatar={true}
+        listViewProps={{width: '100%'}}
       />
     );
 
     if (Platform.OS === 'android') {
       return (
         <View
-          style={{flex: 1}}
+          style={{flex: 1, width: '100%'}}
           behavior="padding"
           keyboardVerticalOffset={30}
           enabled>
