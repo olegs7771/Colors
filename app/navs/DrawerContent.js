@@ -3,7 +3,7 @@ import {Text, StyleSheet, View, TouchableOpacity, Image} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 import {connect} from 'react-redux';
-import {logoutUser} from '../../store/actions/authAction';
+import {logoutUser, storeAvatar} from '../../store/actions/authAction';
 import ImagePicker from 'react-native-image-crop-picker';
 
 class DrawerContent extends Component {
@@ -14,6 +14,7 @@ class DrawerContent extends Component {
       isImagePicked: false,
       fileURI: null,
       fileTYPE: null,
+      fileData: null,
     };
   }
 
@@ -33,6 +34,7 @@ class DrawerContent extends Component {
       width: 300,
       height: 400,
       cropping: true,
+      includeBase64: true,
     })
       .then(image => {
         console.log(image);
@@ -41,6 +43,7 @@ class DrawerContent extends Component {
             ...prevState,
             fileURI: image.path,
             fileTYPE: image.mime,
+            fileData: image.data,
             isImagePicked: true,
           };
         });
@@ -48,6 +51,15 @@ class DrawerContent extends Component {
       .catch(err => {
         console.log('err ', err);
       });
+  };
+
+  //Store Avatar Image In FireBase Storage via /functions
+  _storeAvatar = () => {
+    const data = {
+      uri: this.state.fileURI,
+      base64: this.state.fileData,
+    };
+    this.props.storeAvatar(data);
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -108,7 +120,9 @@ class DrawerContent extends Component {
             <TouchableOpacity style={styles.CancelButton}>
               <Text style={{color: '#FFF'}}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.AcceptButton}>
+            <TouchableOpacity
+              style={styles.AcceptButton}
+              onPress={this._storeAvatar}>
               <Text style={{color: '#FFF'}}>Accept</Text>
             </TouchableOpacity>
           </View>
@@ -121,7 +135,9 @@ class DrawerContent extends Component {
 const mapStateToProps = state => ({
   auth: state.auth,
 });
-export default connect(mapStateToProps, {logoutUser})(DrawerContent);
+export default connect(mapStateToProps, {logoutUser, storeAvatar})(
+  DrawerContent,
+);
 
 const styles = StyleSheet.create({
   container: {

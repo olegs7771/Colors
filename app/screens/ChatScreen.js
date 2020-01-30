@@ -232,7 +232,6 @@ export class ChatScreen extends Component {
         props={this.props}
         state={this.state}
         showUserAvatar={true}
-        listViewProps={{width: '100%'}}
       />
     );
 
