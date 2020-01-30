@@ -16,14 +16,14 @@ export const logoutUser = () => dispatch => {
 //Store Avatar Image in FireBase Storage
 
 export const storeAvatar = data => dispatch => {
-  console.log('data store avatar', data.base64);
+  // console.log('data store avatar', data.base64);
   // fetch(' https://us-central1-chat-7c887.cloudfunctions.net/storeImage', {
   //   method: 'POST',
   //   body: JSON.stringify({
   //     image: data.base64,
   //   }),
   // })
-  //   .catch(err => console.log(err))
+  //   .catch(err => console.log('error in action', err))
   //   .then(res => res.json())
   //   .then(parsedRes => {
   //     console.log('parsedRes', parsedRes);

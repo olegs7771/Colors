@@ -37,7 +37,7 @@ class DrawerContent extends Component {
       includeBase64: true,
     })
       .then(image => {
-        console.log(image);
+        // console.log(image);
         this.setState(prevState => {
           return {
             ...prevState,
