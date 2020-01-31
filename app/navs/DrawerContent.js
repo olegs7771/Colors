@@ -55,9 +55,15 @@ class DrawerContent extends Component {
 
   //Store Avatar Image In FireBase Storage via /functions
   _storeAvatar = () => {
-    const data = {
+    const fd = new FormData();
+    fd.append('image', {
       uri: this.state.fileURI,
-      base64: this.state.fileData,
+      type: 'image/jpeg',
+    });
+    const data = {
+      // uri: this.state.fileURI,
+      // base64: this.state.fileData,
+      fd,
     };
     this.props.storeAvatar(data);
   };

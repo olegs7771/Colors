@@ -16,28 +16,29 @@ export const logoutUser = () => dispatch => {
 //Store Avatar Image in FireBase Storage
 
 export const storeAvatar = data => dispatch => {
-  // console.log('data store avatar', data.base64);
-  // fetch(' https://us-central1-chat-7c887.cloudfunctions.net/storeImage', {
-  //   method: 'POST',
-  //   body: JSON.stringify({
-  //     image: data.base64,
-  //   }),
-  // })
-  //   .catch(err => console.log('error in action', err))
-  //   .then(res => res.json())
-  //   .then(parsedRes => {
-  //     console.log('parsedRes', parsedRes);
-  //   });
-
-  axios
-    .post(
-      ' https://us-central1-chat-7c887.cloudfunctions.net/storeImage',
-      JSON.stringify(data.base64),
-    )
-    .then(res => {
-      console.log('res', res);
+  console.log('data store avatar', data);
+  fetch(' https://us-central1-chat-7c887.cloudfunctions.net/storeImage', {
+    method: 'POST',
+    body: data.fd,
+    // body: JSON.stringify({
+    //   image: data.base64,
+    // }),
+  })
+    .then(res => res.json())
+    .then(parsedRes => {
+      console.log('parsedRes', parsedRes);
     })
-    .catch(err => {
-      console.log('err', err);
-    });
+    .catch(err => console.log('error in action', err));
+
+  // axios
+  //   .post(
+  //     ' https://us-central1-chat-7c887.cloudfunctions.net/storeImage',
+  //     JSON.stringify(data.base64),
+  //   )
+  //   .then(res => {
+  //     console.log('res', res);
+  //   })
+  //   .catch(err => {
+  //     console.log('err', err);
+  //   });
 };
