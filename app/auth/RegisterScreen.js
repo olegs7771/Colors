@@ -11,10 +11,10 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
-import storage from '@react-native-firebase/storage';
+// import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
-import database from '@react-native-firebase/database';
-import {firebase} from '@react-native-firebase/storage';
+// import database from '@react-native-firebase/database';
+// import {firebase} from '@react-native-firebase/storage';
 //Validation]
 import LoginValid from '../validation/LoginValid';
 import {register} from '../misc/FireBaseApi';

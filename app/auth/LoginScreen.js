@@ -1,4 +1,5 @@
-import React, {Component, useEffect} from 'react';
+import React, {Component} from 'react';
+import {firebase} from '@react-native-firebase/storage';
 //Redux
 import {connect} from 'react-redux';
 import {getAuth} from '../../store/actions/authAction';
@@ -14,9 +15,10 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
-import {firebase} from '@react-native-firebase/storage';
+
 //Validation]
 import LoginValid from '../validation/LoginValid';
+import {login} from '../misc/FireBaseApi';
 
 class LoginScreen extends Component {
   state = {
@@ -48,19 +50,20 @@ class LoginScreen extends Component {
 
     const email = this.state.form.email,
       password = this.state.form.password;
-    await firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then(res => {
+
+    login(email, password, cb => {
+      if (cb.email) {
         //Create data for auth action
         const data = {
-          email: res.user.email,
-          _id: res.user.uid,
+          email: cb.email,
+          _id: cb.uid,
         };
 
         //Set AsyncStorage
         AsyncStorage.setItem('user', JSON.stringify(data))
           .then(() => {
+            console.log('async storage');
+
             //To Redux
             this.props.getAuth(data);
             // Navigate to home
@@ -71,16 +74,49 @@ class LoginScreen extends Component {
           .catch(err => {
             console.log('error itemSet()');
           });
-      })
-      .catch(err => {
-        console.log('err :', err['message']);
-        const errEdited = err['message'].toString().substring(21);
-        errorsLocal.common = errEdited;
-        // errorsLocal.common = err['message'].subString(20);
+      }
+      if (cb.error) {
         this.setState({
-          errors: errorsLocal,
+          errors: {
+            common: cb.error,
+          },
         });
-      });
+      }
+    });
+
+    // await firebase
+    //   .auth()
+    //   .signInWithEmailAndPassword(email, password)
+    //   .then(res => {
+    //     //Create data for auth action
+    //     const data = {
+    //       email: res.user.email,
+    //       _id: res.user.uid,
+    //     };
+
+    //     //Set AsyncStorage
+    //     AsyncStorage.setItem('user', JSON.stringify(data))
+    //       .then(() => {
+    //         //To Redux
+    //         this.props.getAuth(data);
+    //         // Navigate to home
+    //         this.props.navigation.navigate('Home', {
+    //           email: this.state.form.email,
+    //         });
+    //       })
+    //       .catch(err => {
+    //         console.log('error itemSet()');
+    //       });
+    //   })
+    //   .catch(err => {
+    //     console.log('err :', err['message']);
+    //     const errEdited = err['message'].toString().substring(21);
+    //     errorsLocal.common = errEdited;
+    //     // errorsLocal.common = err['message'].subString(20);
+    //     this.setState({
+    //       errors: errorsLocal,
+    //     });
+    //   });
   };
 
   componentDidMount() {

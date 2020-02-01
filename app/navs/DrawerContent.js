@@ -84,7 +84,7 @@ class DrawerContent extends Component {
       <View style={styles.container}>
         <TouchableOpacity style={styles.containerUser}>
           <Text style={{fontSize: 20, fontWeight: 'bold', color: '#FFF'}}>
-            User : {this.props.auth.user.email}{' '}
+            User : {this.props.auth.user ? this.props.auth.user.email : ''}{' '}
           </Text>
         </TouchableOpacity>
 
