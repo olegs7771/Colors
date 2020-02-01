@@ -17,6 +17,7 @@ import database from '@react-native-firebase/database';
 import {firebase} from '@react-native-firebase/storage';
 //Validation]
 import LoginValid from '../validation/LoginValid';
+import {register} from '../misc/FireBaseApi';
 
 export default class RegisterScreen extends Component {
   state = {
@@ -33,7 +34,7 @@ export default class RegisterScreen extends Component {
     this.setState({loading: true});
     const errorsLocal = {};
     const messagesLocal = {};
-    //Validation
+    // Validation;
     const {errors, isValid} = LoginValid(this.state.form);
     if (!isValid) {
       return this.setState(prevState => {
@@ -45,36 +46,22 @@ export default class RegisterScreen extends Component {
     }
     const email = this.state.form.email,
       password = this.state.form.password;
-    await firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(
-        user => {
-          // console.log('user', user.additionalUserInfo.isNewUser);
-          //New User been created
-          console.log('user', user);
-
-          const message = `User ${user.user._user.email} been created`;
-          console.log('message', message);
-
-          messagesLocal.user = message;
-          this.setState({
-            messages: messagesLocal,
-            loading: false,
-          });
-        },
-        err => {
-          console.log('err :', err);
-          // console.log('err length', err['message'].length);
-
-          const errEdited = err['message'].toString().substring(31);
-          errorsLocal.common = errEdited;
-          // errorsLocal.common = err['message'].subString(20);
-          this.setState({
-            errors: errorsLocal,
-          });
-        },
-      );
+    await register(email, password, cb => {
+      if (cb.message) {
+        messagesLocal.user = cb.message;
+        this.setState({
+          messages: messagesLocal,
+          loading: false,
+        });
+      }
+      if (cb.error) {
+        this.setState({
+          errors: {
+            common: cb.error,
+          },
+        });
+      }
+    });
   };
 
   render() {
