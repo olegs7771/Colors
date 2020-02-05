@@ -13,6 +13,7 @@ export default (state = initialState, action) => {
         user: {
           email: action.payload.email,
           _id: action.payload._id,
+          avatar: action.payload.avatar,
         },
         isAuthenticated: true,
       };
@@ -22,6 +23,7 @@ export default (state = initialState, action) => {
         user: null,
         isAuthenticated: false,
       };
+
     default:
       return state;
   }

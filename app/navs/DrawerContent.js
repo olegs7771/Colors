@@ -1,21 +1,42 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, View, TouchableOpacity, Image} from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/dist/Ionicons';
 import {connect} from 'react-redux';
 import {logoutUser, storeAvatar} from '../../store/actions/authAction';
 import ImagePicker from 'react-native-image-crop-picker';
+import {uploadAvatar} from '../misc/FireBaseApi';
 
 class DrawerContent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: null,
       isImagePicked: false,
       fileURI: null,
       fileTYPE: null,
       fileData: null,
+      messages: {},
+      loading: false,
     };
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    //On Drawer closed clear messages and picked image
+    if (
+      prevProps.navigation.state.isDrawerOpen !==
+      this.props.navigation.state.isDrawerOpen
+    ) {
+      if (!this.props.navigation.state.isDrawerOpen) {
+        this.setState({messages: {}, fileURI: null});
+      }
+    }
   }
 
   _logOutUser = () => {
@@ -37,7 +58,7 @@ class DrawerContent extends Component {
       includeBase64: true,
     })
       .then(image => {
-        // console.log(image);
+        console.log(image);
         this.setState(prevState => {
           return {
             ...prevState,
@@ -45,6 +66,7 @@ class DrawerContent extends Component {
             fileTYPE: image.mime,
             fileData: image.data,
             isImagePicked: true,
+            messages: {},
           };
         });
       })
@@ -55,36 +77,54 @@ class DrawerContent extends Component {
 
   //Store Avatar Image In FireBase Storage via /functions
   _storeAvatar = () => {
-    const fd = new FormData();
-    fd.append('image', {
-      uri: this.state.fileURI,
-      type: 'image/jpeg',
-    });
-    const data = {
-      // uri: this.state.fileURI,
-      // base64: this.state.fileData,
-      fd,
-    };
-    this.props.storeAvatar(data);
-  };
+    this.setState({loading: true});
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.props.auth !== this.props.auth) {
+    //id for user to change avatar
+    const uid = this.props.auth.user._id;
+    const image = {};
+    image.uri = this.state.fileURI;
+
+    if (!this.state.fileURI) {
       this.setState(prevState => {
         return {
           ...prevState,
-          email: this.props.auth.user.email,
+          messages: {error: 'Pick Image!'},
         };
       });
+      return;
     }
-  }
+
+    uploadAvatar(image, uid, cb => {
+      console.log('cb.cbObj in drawer', cb.cbObj);
+      const data = {
+        email: this.props.auth.user.email,
+        _id: this.props.auth.user._id,
+        avatar: cb.cbObj.urlToFile,
+      };
+      //Change avatar in AsyncStorage
+      AsyncStorage.setItem('user', JSON.stringify(data)).then(() => {
+        console.log('user inserted in async storage');
+        this.setState(prevState => {
+          return {
+            ...prevState,
+            messages: {
+              Success: 'Avatar updated!',
+            },
+            loading: false,
+          };
+        });
+        this.props.storeAvatar(data);
+      });
+    });
+  };
 
   render() {
     return (
       <View style={styles.container}>
         <TouchableOpacity style={styles.containerUser}>
           <Text style={{fontSize: 20, fontWeight: 'bold', color: '#FFF'}}>
-            User : {this.props.auth.user ? this.props.auth.user.email : ''}{' '}
+            User :{' '}
+            {this.props.auth.user !== null ? this.props.auth.user.email : ''}{' '}
           </Text>
         </TouchableOpacity>
 
@@ -112,13 +152,38 @@ class DrawerContent extends Component {
             onPress={this._openPicker}>
             <Text style={{color: '#FFF'}}>Pick Avatar</Text>
           </TouchableOpacity>
+          {Object.keys(this.state.messages).length !== 0 && (
+            <View>
+              <Text style={{color: 'red'}}>{this.state.messages.error}</Text>
+              <Text style={{color: 'green'}}>
+                {this.state.messages.Success}
+              </Text>
+            </View>
+          )}
 
+          {/* {Container for this.state picked Image} */}
           {this.state.fileURI && (
             <View style={styles.containerImage}>
               <Image
                 source={{uri: this.state.fileURI}}
                 style={{width: '100%', height: 200}}
               />
+            </View>
+          )}
+          {/* {Container for this.props.auth.user.avatar Image} */}
+          {this.props.auth.user &&
+            this.props.auth.user.avatar &&
+            !this.state.fileURI && (
+              <View style={styles.containerImage}>
+                <Image
+                  source={{uri: this.props.auth.user.avatar}}
+                  style={{width: '100%', height: 200}}
+                />
+              </View>
+            )}
+          {this.state.loading && Object.keys(this.state.messages).length === 0 && (
+            <View style={{marginTop: 20}}>
+              <ActivityIndicator size={40} color="#4dc3ff" />
             </View>
           )}
 
@@ -185,7 +250,6 @@ const styles = StyleSheet.create({
   containerImage: {
     width: '80%',
     marginTop: 30,
-    borderRadius: 5,
   },
   containerCombineButtons: {
     flexDirection: 'row',

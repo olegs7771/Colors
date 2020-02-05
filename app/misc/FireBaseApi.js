@@ -1,8 +1,9 @@
 import {firebase} from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
+import uuid from 'uuid';
 
 //To add avatar field
-const dbMessages = firestore().collection('messages');
+
 const dbUsers = firestore().collection('users');
 
 export const register = async (email, password, cb) => {
@@ -21,8 +22,17 @@ export const register = async (email, password, cb) => {
         const userBody = {
           _id: user.user._user.uid,
           email: user.user._user.email,
-          avatar: null,
+          avatar: null, //we can add URI of Avater  here later
         };
+        //Add user to /users
+        dbUsers
+          .doc(user.user._user.uid)
+          .set({
+            userBody,
+          })
+          .then(user => {
+            console.log('created new user :', user);
+          });
 
         return cb({
           message,
@@ -45,10 +55,19 @@ export const login = async (email, password, cb) => {
     .auth()
     .signInWithEmailAndPassword(email, password)
     .then(res => {
-      return cb({
-        email: res.user.email,
-        _id: res.user.uid,
-      });
+      console.log('res in login', res);
+      if (res.user) {
+        //After User Logged obtain avatar from /users by id
+        let userRef = dbUsers.doc(res.user.uid);
+        userRef.get().then(user => {
+          // console.log('user after login  user._data', user._data);
+          return cb({
+            email: user._data.userBody.email,
+            _id: user._data.userBody._id,
+            avatar: user._data.userBody.avatar,
+          });
+        });
+      }
     })
     .catch(err => {
       const error = err['message'].toString().substring(21);
@@ -56,12 +75,44 @@ export const login = async (email, password, cb) => {
     });
 };
 
-//Upload Image to Storage
+//Update /user-->avatar field
 
-export const uploadAvatar = (image, cb) => {
-  db.add({
-    message,
-  }).then(ref => {
-    console.log(' added  message ref.id', ref.id);
-  });
+export const uploadAvatar = async (image, id, cb) => {
+  console.log('function here');
+
+  //Create object for cb
+  let cbObj = {};
+
+  const fileExt = image.uri.split('.').pop();
+  const fileName = `${uuid()}.${fileExt}`;
+  //Create Ref for Image in Storage
+  const storageRef = firebase.storage().ref(`avatars/${fileName}`);
+  storageRef.putFile(image.uri).on(
+    firebase.storage.TaskEvent.STATE_CHANGED,
+    snapshot => {
+      if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
+        cbObj.snapshot = snapshot;
+      }
+    },
+    //Catch Error if upload failed
+    error => {
+      unsubscribe();
+
+      cb('Image upload failed' + error.toString());
+    },
+    //Get Download Url of stored file
+    async () => {
+      await storageRef.getDownloadURL().then(url => {
+        //Create Ref for Document to Update in /users
+        let userRef = dbUsers.doc(id);
+        userRef.update({'userBody.avatar': `${url}`}).then(() => {
+          cbObj.urlToFile = url;
+
+          console.log('url', url);
+          console.log('cbObj.urlToFile', cbObj.urlToFile);
+          cb({cbObj});
+        });
+      });
+    },
+  );
 };

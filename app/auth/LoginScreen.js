@@ -52,17 +52,20 @@ class LoginScreen extends Component {
       password = this.state.form.password;
 
     login(email, password, cb => {
+      console.log('cb user logged', cb);
+
       if (cb.email) {
         //Create data for auth action
         const data = {
           email: cb.email,
-          _id: cb.uid,
+          _id: cb._id,
+          avatar: cb.avatar,
         };
 
         //Set AsyncStorage
         AsyncStorage.setItem('user', JSON.stringify(data))
           .then(() => {
-            console.log('async storage');
+            console.log('user inserted in async storage');
 
             //To Redux
             this.props.getAuth(data);

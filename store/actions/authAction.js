@@ -1,6 +1,8 @@
-import {GET_AUTH, LOGOUT_USER, STORE_AVATAR_IMAGE} from './type';
+import {GET_AUTH, LOGOUT_USER} from './type';
 
 export const getAuth = data => dispatch => {
+  console.log('data of user', data);
+
   dispatch({
     type: GET_AUTH,
     payload: data,
@@ -12,20 +14,11 @@ export const logoutUser = () => dispatch => {
   });
 };
 
-//Store Avatar Image in FireBase Storage
-
+//Update auth.user with new avatar url
 export const storeAvatar = data => dispatch => {
-  console.log('data store avatar', data);
-  fetch(' https://us-central1-chat-7c887.cloudfunctions.net/storeImage', {
-    method: 'POST',
-    body: data.fd,
-    // body: JSON.stringify({
-    //   image: data.base64,
-    // }),
-  })
-    .then(res => res.json())
-    .then(parsedRes => {
-      console.log('parsedRes', parsedRes);
-    })
-    .catch(err => console.log('error in action', err));
+  console.log('data store avatar in action', data);
+  dispatch({
+    type: GET_AUTH,
+    payload: data,
+  });
 };

@@ -15,6 +15,7 @@ class LoaderScreen extends Component {
     await AsyncStorage.getItem('user')
       .then(user => {
         // JSON.parse(email);
+        console.log('user in loader', user);
 
         const data = JSON.parse(user);
 
