@@ -77,8 +77,8 @@ export const login = async (email, password, cb) => {
 
 //Update /user-->avatar field
 
-export const uploadAvatar = async (image, id, cb) => {
-  console.log('function here');
+export const uploadAvatar = async (image, id, path, cb) => {
+  console.log('path to delete', path);
 
   //Create object for cb
   let cbObj = {};
@@ -93,6 +93,21 @@ export const uploadAvatar = async (image, id, cb) => {
       if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
         cbObj.snapshot = snapshot;
       }
+
+      //After New File created we can delete previous one with ref
+      // Create a reference to the file to delete
+      var desertRef = storageRef.child(path);
+      console.log('desertRef', desertRef);
+
+      // Delete the file
+      desertRef
+        .delete()
+        .then(() => {
+          console.log('previous file deleted');
+        })
+        .catch(error => {
+          console.log('cant delete previous file', error);
+        });
     },
     //Catch Error if upload failed
     error => {

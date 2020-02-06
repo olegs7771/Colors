@@ -14,6 +14,8 @@ export default (state = initialState, action) => {
           email: action.payload.email,
           _id: action.payload._id,
           avatar: action.payload.avatar,
+          //path ref for delete()
+          path: action.payload.path,
         },
         isAuthenticated: true,
       };

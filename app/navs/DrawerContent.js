@@ -93,13 +93,19 @@ class DrawerContent extends Component {
       });
       return;
     }
-
-    uploadAvatar(image, uid, cb => {
-      console.log('cb.cbObj in drawer', cb.cbObj);
+    //path from redux for ref to delete()
+    const path = this.props.auth.user.path;
+    uploadAvatar(image, uid, path, cb => {
+      // console.log('cb.cbObj in drawer', cb.cbObj);
+      // console.log(
+      //   'cb.cbObj in drawer snapshot.ref.path',
+      //   cb.cbObj.snapshot.ref.path,
+      // );
       const data = {
         email: this.props.auth.user.email,
         _id: this.props.auth.user._id,
         avatar: cb.cbObj.urlToFile,
+        path: cb.cbObj.snapshot.ref.path,
       };
       //Change avatar in AsyncStorage
       AsyncStorage.setItem('user', JSON.stringify(data)).then(() => {
