@@ -23,6 +23,7 @@ export const register = async (email, password, cb) => {
           _id: user.user._user.uid,
           email: user.user._user.email,
           avatar: null, //we can add URI of Avater  here later
+          path: null, // path we use as  Ref for delete prev file
         };
         //Add user to /users
         dbUsers
@@ -65,6 +66,7 @@ export const login = async (email, password, cb) => {
             email: user._data.userBody.email,
             _id: user._data.userBody._id,
             avatar: user._data.userBody.avatar,
+            path: user._data.userBody.path,
           });
         });
       }
@@ -85,25 +87,39 @@ export const uploadAvatar = async (image, id, path, cb) => {
 
   const fileExt = image.uri.split('.').pop();
   const fileName = `${uuid()}.${fileExt}`;
+  console.log('fileName', fileName);
+  console.log('image.uri', image.uri);
+
   //Create Ref for Image in Storage
   const storageRef = firebase.storage().ref(`avatars/${fileName}`);
+  console.log('storageRef', storageRef);
+
   storageRef.putFile(image.uri).on(
     firebase.storage.TaskEvent.STATE_CHANGED,
     snapshot => {
+      console.log('snapshot', snapshot);
+
       if (snapshot.state === firebase.storage.TaskState.SUCCESS) {
         cbObj.snapshot = snapshot;
+        //update path in /users
+        let userRef = dbUsers.doc(id);
+        userRef.update({'userBody.path': `${snapshot.ref.path}`}).then(() => {
+          cbObj.path = snapshot.ref.path;
+        });
       }
 
       //After New File created we can delete previous one with ref
       // Create a reference to the file to delete
-      var desertRef = storageRef.child(path);
-      console.log('desertRef', desertRef);
+      // var desertRef = storageRef.child(path);
+      // console.log('desertRef', desertRef);
+      const fileRef = firebase.storage().ref(path);
+      console.log('fileRef ', fileRef);
 
       // Delete the file
-      desertRef
+      fileRef
         .delete()
         .then(() => {
-          console.log('previous file deleted');
+          return console.log('previous file deleted successfully');
         })
         .catch(error => {
           console.log('cant delete previous file', error);

@@ -60,6 +60,7 @@ class LoginScreen extends Component {
           email: cb.email,
           _id: cb._id,
           avatar: cb.avatar,
+          path: cb.path,
         };
 
         //Set AsyncStorage
@@ -86,40 +87,6 @@ class LoginScreen extends Component {
         });
       }
     });
-
-    // await firebase
-    //   .auth()
-    //   .signInWithEmailAndPassword(email, password)
-    //   .then(res => {
-    //     //Create data for auth action
-    //     const data = {
-    //       email: res.user.email,
-    //       _id: res.user.uid,
-    //     };
-
-    //     //Set AsyncStorage
-    //     AsyncStorage.setItem('user', JSON.stringify(data))
-    //       .then(() => {
-    //         //To Redux
-    //         this.props.getAuth(data);
-    //         // Navigate to home
-    //         this.props.navigation.navigate('Home', {
-    //           email: this.state.form.email,
-    //         });
-    //       })
-    //       .catch(err => {
-    //         console.log('error itemSet()');
-    //       });
-    //   })
-    //   .catch(err => {
-    //     console.log('err :', err['message']);
-    //     const errEdited = err['message'].toString().substring(21);
-    //     errorsLocal.common = errEdited;
-    //     // errorsLocal.common = err['message'].subString(20);
-    //     this.setState({
-    //       errors: errorsLocal,
-    //     });
-    //   });
   };
 
   componentDidMount() {
