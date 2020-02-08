@@ -116,14 +116,16 @@ export const uploadAvatar = async (image, id, path, cb) => {
       console.log('fileRef ', fileRef);
 
       // Delete the file
-      fileRef
-        .delete()
-        .then(() => {
-          return console.log('previous file deleted successfully');
-        })
-        .catch(error => {
-          console.log('cant delete previous file', error);
-        });
+      if (path) {
+        fileRef
+          .delete()
+          .then(() => {
+            return console.log('previous file deleted successfully');
+          })
+          .catch(error => {
+            console.log('cant delete previous file', error);
+          });
+      }
     },
     //Catch Error if upload failed
     error => {

@@ -17,6 +17,7 @@ import {selectPost} from '../../store/actions/postAction';
 import {GiftedChat} from 'react-native-gifted-chat';
 import firestore from '@react-native-firebase/firestore';
 import ChatSameUser from '../misc/ChatSameUser';
+import {LocalNotification} from '../misc/LocalPushController';
 
 const db = firestore().collection('messages');
 
@@ -52,9 +53,12 @@ export class ChatScreen extends Component {
       .collection('messages')
 
       .onSnapshot(querySnapshot => {
+        console.log('querySnapshot', querySnapshot);
+
         const {_changes, _docs, size} = querySnapshot;
 
-        console.log('querySnapshot', querySnapshot._changes);
+        console.log('querySnapshot._changes ', _changes);
+
         const sortedByDate = querySnapshot._changes.sort((a, b) => {
           const timeA = a.doc._data.message.createdAt._seconds;
           const timeB = b.doc._data.message.createdAt._seconds;
@@ -65,23 +69,64 @@ export class ChatScreen extends Component {
         console.log('sortedByDate', sortedByDate);
 
         sortedByDate.forEach(element => {
-          console.log('element CDM', element.doc._data.message);
+          // console.log('element CDM', element.doc._data.message);
           // console.log('element CDM type', element.type);
 
           // console.log('element', element);
           // console.log('element.type', element.type);
 
           //When Message been added on Server
-          if (element.type === 'added') {
-            const message = element.doc._data.message;
-            console.log('message from db', message.createdAt._seconds);
 
+          const message = element.doc._data.message;
+
+          // Incoming Added message
+          if (_changes < _docs) {
+            _changes.map(element => {
+              console.log('element new message', element.doc._data.message);
+
+              // Push notification of incoming message
+              const data = {
+                pushNotification: `${element.doc._data.message.text}  from ${element.doc._data.message.user.name}`,
+              };
+              if (
+                data.pushNotification &&
+                ChatSameUser(
+                  this.props.auth.user.email,
+                  element.doc._data.message.user.name,
+                )
+              ) {
+                console.log('incoming change', element.doc._data.message);
+                console.log('data', data);
+
+                LocalNotification({data: 'Message'});
+              }
+
+              const messageTimeFixed = {
+                ...element.doc._data.message,
+                createdAt: element.doc._data.message.createdAt.toDate(),
+              };
+              // console.log('messageTimeFixed single', messageTimeFixed);
+              // console.log('this.state.messages', this.state.messages);
+              const newArray = [].concat(messageTimeFixed, this.state.messages);
+
+              this.setState(prevState => {
+                return {
+                  ...prevState,
+                  messages: newArray,
+                  restrictDumpToServer: true,
+                };
+              });
+              console.log('this.state.messages after', this.state.messages);
+            });
+          } else {
+            //Fixing TimeStamp for FireBase Document
             const messageTimeFixed = {
               ...message,
               createdAt: message.createdAt.toDate(),
             };
+            console.log('messageTimeFixed', messageTimeFixed);
 
-            //If User made message prevent while type added
+            //If User made message prevent while type=== 'added'
             if (!this.state.restrictAddType) {
               this.setState(prevState => {
                 return {
@@ -220,6 +265,7 @@ export class ChatScreen extends Component {
   }
 
   render() {
+    LocalNotification({data: 'Message'});
     const chat = (
       <GiftedChat
         messages={this.state.messages}
@@ -233,6 +279,7 @@ export class ChatScreen extends Component {
         props={this.props}
         state={this.state}
         showUserAvatar={true}
+        // inverted={false}
       />
     );
 

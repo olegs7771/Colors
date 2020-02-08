@@ -1,7 +1,7 @@
 import {GET_AUTH, LOGOUT_USER} from './type';
 
 export const getAuth = data => dispatch => {
-  console.log('data of user', data);
+  // console.log('data of user', data);
 
   dispatch({
     type: GET_AUTH,
@@ -16,7 +16,7 @@ export const logoutUser = () => dispatch => {
 
 //Update auth.user with new avatar url
 export const storeAvatar = data => dispatch => {
-  console.log('data store avatar in action', data);
+  // console.log('data store avatar in action', data);
   dispatch({
     type: GET_AUTH,
     payload: data,

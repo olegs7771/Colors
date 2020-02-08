@@ -1,9 +1,15 @@
 import React, {Component} from 'react';
 import {Text, StyleSheet, View, Button} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+import {LocalNotification} from '../misc/LocalPushController';
+import RemotePushController from '../misc/RemotePushController';
 export default class HomeScreen extends Component {
   state = {
     email: null,
+  };
+
+  _localNotification = () => {
+    LocalNotification();
   };
 
   componentDidMount() {
@@ -27,6 +33,15 @@ export default class HomeScreen extends Component {
       <View style={styles.container}>
         <View style={styles.containerTitle}>
           <Text style={styles.textTitle}>Wellcome to my App !</Text>
+          <View style={{marginTop: 30}}>
+            <Button
+              title="Show Notification"
+              onPress={this._localNotification}
+            />
+          </View>
+          <View>
+            <RemotePushController />
+          </View>
         </View>
       </View>
     );
