@@ -98,7 +98,7 @@ export class ChatScreen extends Component {
                 console.log('incoming change', element.doc._data.message);
                 console.log('data', data);
 
-                LocalNotification({data: 'Message'});
+                LocalNotification(data);
               }
 
               const messageTimeFixed = {
@@ -265,7 +265,6 @@ export class ChatScreen extends Component {
   }
 
   render() {
-    LocalNotification({data: 'Message'});
     const chat = (
       <GiftedChat
         messages={this.state.messages}

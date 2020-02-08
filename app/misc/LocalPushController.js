@@ -3,10 +3,10 @@ import PushNotification from 'react-native-push-notification';
 export const LocalNotification = data => {
   PushNotification.localNotification({
     autoCancel: true,
-    bigText: 'This is loacal notification in RN App. Only show,when expanded.',
+    bigText: '',
     subText: 'Local Notification Demo',
-    title: 'some message',
-    message: 'Expand me to see more',
+    title: data.pushNotification,
+    message: '',
     vibrate: true,
     vibration: 300,
     playSound: true,
