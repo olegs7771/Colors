@@ -1,15 +1,11 @@
 import React, {Component} from 'react';
-import {Text, StyleSheet, View, Button} from 'react-native';
+import {Text, StyleSheet, View, Button, Image} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import {LocalNotification} from '../misc/LocalPushController';
+
 import RemotePushController from '../misc/RemotePushController';
 export default class HomeScreen extends Component {
   state = {
     email: null,
-  };
-
-  _localNotification = () => {
-    LocalNotification();
   };
 
   componentDidMount() {
@@ -31,14 +27,15 @@ export default class HomeScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <View>
+          <Image
+            source={require('../../assets/beach.jpg')}
+            style={{position: 'absolute', height: 600, width: '100%'}}
+          />
+        </View>
         <View style={styles.containerTitle}>
-          <Text style={styles.textTitle}>Wellcome to my App !</Text>
-          <View style={{marginTop: 30}}>
-            <Button
-              title="Show Notification"
-              onPress={this._localNotification}
-            />
-          </View>
+          <Text style={styles.textTitle}>Wellcome to ChatApp !</Text>
+
           <View>
             <RemotePushController />
           </View>
@@ -51,7 +48,6 @@ export default class HomeScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#e6f7ff',
   },
   containerTitle: {
     alignItems: 'center',
@@ -59,5 +55,6 @@ const styles = StyleSheet.create({
   },
   textTitle: {
     fontSize: 20,
+    color: '#FFF',
   },
 });

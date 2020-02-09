@@ -32,6 +32,7 @@ const TabNavigator = createBottomTabNavigator(
   {
     navigationOptions: ({navigation}) => {
       const {routeName} = navigation.state.routes[navigation.state.index];
+
       return {
         headerTitleContainerStyle: {
           width: '60%',
@@ -46,6 +47,9 @@ const TabNavigator = createBottomTabNavigator(
           fontSize: 20,
           fontWeight: 'bold',
           color: '#FFF',
+        },
+        tabBarIcon: {
+          fontSize: 20,
         },
       };
     },

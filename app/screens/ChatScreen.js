@@ -83,7 +83,7 @@ export class ChatScreen extends Component {
 
           // Incoming Added message
           if (
-            querySnapshot._changes.length < querySnapshot._docs.length &&
+            querySnapshot._changes.length !== querySnapshot._docs.length &&
             !isSameUser(
               this.props.auth.user.email,
               element.doc._data.message.user.name,
@@ -130,7 +130,10 @@ export class ChatScreen extends Component {
           } else if (element.type !== 'removed') {
             if (
               querySnapshot._docs.length < 2 &&
-              querySnapshot._changes.length !== querySnapshot._docs.length
+              !isSameUser(
+                this.props.auth.user.email,
+                element.doc._data.message.user.name,
+              )
             ) {
               // Push notification of incoming message
               const data = {
