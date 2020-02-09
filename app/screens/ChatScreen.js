@@ -16,7 +16,7 @@ import {connect} from 'react-redux';
 import {selectPost} from '../../store/actions/postAction';
 import {GiftedChat} from 'react-native-gifted-chat';
 import firestore from '@react-native-firebase/firestore';
-import ChatSameUser from '../misc/ChatSameUser';
+import isSameUser from '../misc/ChatSameUser';
 import {LocalNotification} from '../misc/LocalPushController';
 
 const db = firestore().collection('messages');
@@ -80,7 +80,14 @@ export class ChatScreen extends Component {
           const message = element.doc._data.message;
 
           // Incoming Added message
-          if (_changes < _docs) {
+          if (
+            _changes < _docs &&
+            !isSameUser(
+              this.props.auth.user.email,
+              element.doc._data.message.user.name,
+            ) &&
+            _changes.type !== 'removed'
+          ) {
             _changes.map(element => {
               console.log('element new message', element.doc._data.message);
 
@@ -88,13 +95,7 @@ export class ChatScreen extends Component {
               const data = {
                 pushNotification: `${element.doc._data.message.text}  from ${element.doc._data.message.user.name}`,
               };
-              if (
-                data.pushNotification &&
-                ChatSameUser(
-                  this.props.auth.user.email,
-                  element.doc._data.message.user.name,
-                )
-              ) {
+              if (data.pushNotification) {
                 console.log('incoming change', element.doc._data.message);
                 console.log('data', data);
 
@@ -143,6 +144,8 @@ export class ChatScreen extends Component {
               });
             }, 2000);
           }
+
+          //Deleting Message
 
           //When message been removed on server
           ////////////////////////////////////

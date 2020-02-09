@@ -1,7 +1,7 @@
 import {GET_AUTH, LOGOUT_USER} from './type';
 
 export const getAuth = data => dispatch => {
-  // console.log('data of user', data);
+  console.log('data of user', data);
 
   dispatch({
     type: GET_AUTH,

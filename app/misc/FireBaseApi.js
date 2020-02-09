@@ -51,6 +51,8 @@ export const register = async (email, password, cb) => {
 
 //Login
 export const login = async (email, password, cb) => {
+  console.log('in login');
+
   //Register
   await firebase
     .auth()

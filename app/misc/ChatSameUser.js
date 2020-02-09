@@ -1,5 +1,5 @@
-const ChatSameUser = (currentUser, messageUser) => {
-  return currentUser !== messageUser;
+const isSameUser = (currentUser, messageUser) => {
+  return currentUser === messageUser;
 };
 
-export default ChatSameUser;
+export default isSameUser;

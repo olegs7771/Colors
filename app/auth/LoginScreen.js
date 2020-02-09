@@ -55,6 +55,8 @@ class LoginScreen extends Component {
       console.log('cb user logged', cb);
 
       if (cb.email) {
+        this.setState({loading: false});
+
         //Create data for auth action
         const data = {
           email: cb.email,
@@ -89,9 +91,9 @@ class LoginScreen extends Component {
     });
   };
 
-  componentDidMount() {
-    this.setState(prevState => ({...prevState, loading: false}));
-  }
+  // componentDidMount() {
+  // this.setState(prevState => ({...prevState, loading: false}));
+  // }
 
   render() {
     return (
@@ -151,7 +153,7 @@ class LoginScreen extends Component {
             </View>
           )}
 
-          {this.state.loading && this.state.errors === {} && (
+          {this.state.loading && Object.keys(this.state.errors).length === 0 && (
             <View style={{marginTop: 20}}>
               <ActivityIndicator size={40} color="#4dc3ff" />
             </View>
