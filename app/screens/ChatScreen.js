@@ -78,15 +78,17 @@ export class ChatScreen extends Component {
           //When Message been added on Server
 
           const message = element.doc._data.message;
+          console.log('element.type', element.type);
+          console.log('querySnapshot._changes', querySnapshot._changes);
 
           // Incoming Added message
           if (
-            _changes < _docs &&
+            querySnapshot._changes.length < querySnapshot._docs.length &&
             !isSameUser(
               this.props.auth.user.email,
               element.doc._data.message.user.name,
             ) &&
-            _changes.type !== 'removed'
+            element.type !== 'removed'
           ) {
             _changes.map(element => {
               console.log('element new message', element.doc._data.message);
@@ -117,9 +119,30 @@ export class ChatScreen extends Component {
                   restrictDumpToServer: true,
                 };
               });
+              setTimeout(() => {
+                this.setState({
+                  restrictDumpToServer: false,
+                });
+              }, 2000);
+
               console.log('this.state.messages after', this.state.messages);
             });
-          } else {
+          } else if (element.type !== 'removed') {
+            if (
+              querySnapshot._docs.length < 2 &&
+              querySnapshot._changes.length !== querySnapshot._docs.length
+            ) {
+              // Push notification of incoming message
+              const data = {
+                pushNotification: `${element.doc._data.message.text}  from ${element.doc._data.message.user.name}`,
+              };
+              if (data.pushNotification) {
+                console.log('incoming change', element.doc._data.message);
+                console.log('data', data);
+
+                LocalNotification(data);
+              }
+            }
             //Fixing TimeStamp for FireBase Document
             const messageTimeFixed = {
               ...message,
@@ -143,37 +166,32 @@ export class ChatScreen extends Component {
                 restrictUpdateState: false,
               });
             }, 2000);
-          }
+          } else {
+            //Remove Message
+            if (element.type === 'removed') {
+              console.log('removed!');
 
-          //Deleting Message
+              console.log('element to delete', element.doc._data.message._id);
 
-          //When message been removed on server
-          ////////////////////////////////////
-          if (element.type === 'removed') {
-            console.log('removed!');
-
-            console.log('element to delete', element.doc._data.message._id);
-
-            // Remove Message from State
-            this.setState(prevState => {
-              return {
-                ...prevState,
-                restrictUpdateState: true,
-                restrictDumpToServer: true,
-                messages: prevState.messages.filter(elem => {
-                  return elem._id !== element.doc._data.message._id;
-                }),
-              };
-            });
-            setTimeout(() => {
-              this.setState({
-                restrictDumpToServer: false,
-                restrictUpdateState: false,
+              // Remove Message from State
+              this.setState(prevState => {
+                return {
+                  ...prevState,
+                  restrictUpdateState: true,
+                  restrictDumpToServer: true,
+                  messages: prevState.messages.filter(elem => {
+                    return elem._id !== element.doc._data.message._id;
+                  }),
+                };
               });
-            }, 2000);
+              setTimeout(() => {
+                this.setState({
+                  restrictDumpToServer: false,
+                  restrictUpdateState: false,
+                });
+              }, 2000);
+            }
           }
-          const messageUser = element.doc._data.message.user.user;
-          const loggedUser = this.props.auth.user;
         });
 
         setTimeout(() => {
